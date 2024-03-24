@@ -23,5 +23,22 @@ module RailsBackendScaffold
     # Middleware like session, flash, cookies can be added back manually.
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
+
+    config.action_mailer.delivery_method = :smtp
+    config.action_mailer.smtp_settings = {
+      address: ENV['SMTP_ADDRESS'],
+      port: ENV['SMTP_PORT'],
+      domain: ENV['SMTP_DOMAIN'],
+      user_name: ENV['SMTP_USERNAME'],
+      password: ENV['SMTP_PASSWORD'],
+      authentication: :login,
+      enable_startttls_auto: ENV['SMTP_STARTTTLS_AUTO'],
+      tls: ENV['SMTP_SSL'] == 'true' ? true : false
+    }
+
+    config.action_mailer.default_options = {
+      from: "#{ENV['SITE_NAME']} <#{ENV['EMAIL_FROM']}>",
+      reply_to: ENV['REPLY_TO']
+    }
   end
 end
