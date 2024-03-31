@@ -48,3 +48,4 @@ end
 
 gem 'dotenv-rails'
 gem 'devise_token_auth'
+gem 'omniauth-google-oauth2'
