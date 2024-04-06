@@ -10,4 +10,6 @@ class User < ActiveRecord::Base
   # devise :omniauthable, omniauth_providers: [:google_oauth2]
 
   include DeviseTokenAuth::Concerns::User
+
+  pay_customer default_payment_processor: :stripe
 end
