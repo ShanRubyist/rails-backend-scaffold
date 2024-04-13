@@ -1,12 +1,12 @@
 Pay.setup do |config|
   # For use in the receipt/refund/renewal mailers
-  config.business_name = "Business Name"
-  config.business_address = "1600 Pennsylvania Avenue NW"
-  config.application_name = "My App"
-  config.support_email = "Business Name <support@example.com>"
+  config.business_name = ENV.fetch('BUSINESS_NAME')
+  config.business_address = ENV.fetch('BUSINESS_ADDRESS')
+  config.application_name = ENV.fetch('APPLICATION_NAME')
+  config.support_email = "#{ENV['BUSINESS_NAME']} <#{ENV['EMAIL_FROM']}>"
 
-  config.default_product_name = "default"
-  config.default_plan_name = "default"
+  config.default_product_name = ENV.fetch('DEFAULT_PRODUCT_NAME')
+  config.default_plan_name = ENV.fetch('DEFAULT_PLAN_NAME')
 
   config.automount_routes = true
   config.routes_path = "/pay" # Only when automount_routes is true
