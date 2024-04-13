@@ -7,5 +7,6 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   root "users/sessions#new"
 
-  post 'checkout', to: 'payment#checkout'
+  post 'checkout', to: 'payment#checkout', as: 'checkout'
+  get 'billing', to: 'payment#billing', as: 'billing'
 end
