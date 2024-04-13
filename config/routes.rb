@@ -9,4 +9,17 @@ Rails.application.routes.draw do
 
   post 'checkout', to: 'payment#checkout', as: 'checkout'
   get 'billing', to: 'payment#billing', as: 'billing'
+
+  # 跨域预检请求
+  match '*all', controller: 'application', action: 'cors_preflight_check', via: [:options]
+
+  namespace :api do
+    namespace :v1 do
+      resources :info do
+        collection do
+          get 'models' => "info#models", as: 'models'
+        end
+      end
+    end
+  end
 end
