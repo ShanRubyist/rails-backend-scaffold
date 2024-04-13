@@ -61,3 +61,5 @@ gem "stripe", "~> 10.0"
 # gem "paddle", "~> 2.1"
 # To use Receipts gem for creating invoice and receipt PDFs, also include:
 # gem "receipts", "~> 2.0"
+
+gem 'pundit'
