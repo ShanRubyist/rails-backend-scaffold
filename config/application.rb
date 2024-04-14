@@ -49,5 +49,9 @@ module RailsBackendScaffold
     config.middleware.use config.session_store, config.session_options
 
     config.hosts << ENV.fetch('HOST') { 'localhost' }
+
+    config.generators do |generate|
+      generate.orm :active_record, primary_key_type: :uuid
+    end
   end
 end
