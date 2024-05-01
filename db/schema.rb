@@ -10,13 +10,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_04_06_033008) do
+ActiveRecord::Schema[7.0].define(version: 2024_04_14_054955) do
   # These are extensions that must be enabled in order to support this database
+  enable_extension "pgcrypto"
   enable_extension "plpgsql"
 
-  create_table "pay_charges", force: :cascade do |t|
-    t.bigint "customer_id", null: false
-    t.bigint "subscription_id"
+  create_table "pay_charges", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "customer_id", null: false
+    t.uuid "subscription_id"
     t.string "processor_id", null: false
     t.integer "amount", null: false
     t.string "currency"
@@ -31,9 +32,9 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_06_033008) do
     t.index ["subscription_id"], name: "index_pay_charges_on_subscription_id"
   end
 
-  create_table "pay_customers", force: :cascade do |t|
+  create_table "pay_customers", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "owner_type"
-    t.bigint "owner_id"
+    t.uuid "owner_id"
     t.string "processor", null: false
     t.string "processor_id"
     t.boolean "default"
@@ -46,9 +47,9 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_06_033008) do
     t.index ["processor", "processor_id"], name: "index_pay_customers_on_processor_and_processor_id", unique: true
   end
 
-  create_table "pay_merchants", force: :cascade do |t|
+  create_table "pay_merchants", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "owner_type"
-    t.bigint "owner_id"
+    t.uuid "owner_id"
     t.string "processor", null: false
     t.string "processor_id"
     t.boolean "default"
@@ -58,8 +59,8 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_06_033008) do
     t.index ["owner_type", "owner_id", "processor"], name: "index_pay_merchants_on_owner_type_and_owner_id_and_processor"
   end
 
-  create_table "pay_payment_methods", force: :cascade do |t|
-    t.bigint "customer_id", null: false
+  create_table "pay_payment_methods", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "customer_id", null: false
     t.string "processor_id", null: false
     t.boolean "default"
     t.string "type"
@@ -70,8 +71,8 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_06_033008) do
     t.index ["customer_id", "processor_id"], name: "index_pay_payment_methods_on_customer_id_and_processor_id", unique: true
   end
 
-  create_table "pay_subscriptions", force: :cascade do |t|
-    t.bigint "customer_id", null: false
+  create_table "pay_subscriptions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "customer_id", null: false
     t.string "name", null: false
     t.string "processor_id", null: false
     t.string "processor_plan", null: false
@@ -97,7 +98,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_06_033008) do
     t.index ["pause_starts_at"], name: "index_pay_subscriptions_on_pause_starts_at"
   end
 
-  create_table "pay_webhooks", force: :cascade do |t|
+  create_table "pay_webhooks", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "processor"
     t.string "event_type"
     t.jsonb "event"
