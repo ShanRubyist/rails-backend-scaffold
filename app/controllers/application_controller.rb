@@ -5,20 +5,21 @@ class ApplicationController < ActionController::API
   rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
 
   before_action :cors_set_access_control_headers
+  before_action :set_locale
 
   render :json
 
-
-  private
-
-  def user_not_authorized
-    fail 'User not authorized'
-  end
 
   def cors_preflight_check
     # if request.method == 'OPTIONS'
     render status: 200
     # end
+  end
+
+  private
+
+  def user_not_authorized
+    fail 'User not authorized'
   end
 
   def cors_set_access_control_headers
@@ -32,5 +33,9 @@ class ApplicationController < ActionController::API
 
     #response.headers['Access-Control-Allow-Methods'] = 'POST, GET, PUT, PATCH, DELETE, OPTIONS'
     #response.headers['Access-Control-Max-Age'] = '1728000'
+  end
+
+  def set_locale
+    I18n.locale = params[:locale] || I18n.default_locale
   end
 end
