@@ -7,6 +7,8 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   root "users/sessions#new"
 
+  post 'token', to: 'users/omniauth_callbacks#token'
+
   post 'checkout', to: 'payment#checkout', as: 'checkout'
   get 'billing', to: 'payment#billing', as: 'billing'
 
