@@ -63,3 +63,5 @@ gem "stripe", "~> 10.0"
 # gem "receipts", "~> 2.0"
 
 gem 'pundit'
+
+gem 'rack-attack'
