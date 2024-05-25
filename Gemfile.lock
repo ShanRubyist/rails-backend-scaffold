@@ -154,6 +154,8 @@ GEM
       oauth2 (>= 1.4, < 3)
       omniauth (~> 2.0)
     orm_adapter (0.5.0)
+    paddle (2.2.0)
+      faraday (~> 2.0)
     pay (7.1.1)
       rails (>= 6.0.0)
     pg (1.5.6)
@@ -235,6 +237,7 @@ DEPENDENCIES
   devise_token_auth
   dotenv-rails
   omniauth-google-oauth2
+  paddle (~> 2.1)
   pay
   pg (~> 1.1)
   puma (~> 6.0)

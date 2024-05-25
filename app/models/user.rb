@@ -11,5 +11,5 @@ class User < ActiveRecord::Base
 
   include DeviseTokenAuth::Concerns::User
 
-  pay_customer default_payment_processor: :stripe
+  pay_customer default_payment_processor: ENV.fetch('PAYMENT_PROCESSOR').to_sym
 end

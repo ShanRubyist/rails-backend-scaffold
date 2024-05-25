@@ -38,3 +38,8 @@ Pay.setup do |config|
   #   }
   # }
 end
+
+ActiveSupport.on_load(:pay) do
+  Pay::Webhooks.delegator.subscribe "paddle_billing.transaction.completed", PaddleBillingTransactionCompleted.new
+  Pay::Webhooks.delegator.subscribe "paddle_billing.adjustment.updated", PaddleBillingChargeRefunded.new
+end

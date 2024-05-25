@@ -58,7 +58,7 @@ gem "stripe", "~> 10.0"
 # To use Braintree + PayPal, also include:
 # gem "braintree", "~> 4.7"
 # To use Paddle Billing or Paddle Classic, also include:
-# gem "paddle", "~> 2.1"
+gem "paddle", "~> 2.1"
 # To use Receipts gem for creating invoice and receipt PDFs, also include:
 # gem "receipts", "~> 2.0"
 

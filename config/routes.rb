@@ -9,17 +9,24 @@ Rails.application.routes.draw do
 
   post 'token', to: 'users/omniauth_callbacks#token'
 
-  post 'checkout', to: 'payment#checkout', as: 'checkout'
-  get 'billing', to: 'payment#billing', as: 'billing'
+  post 'stripe_checkout', to: 'payment#stripe_checkout'#, as: 'checkout'
+  get 'stripe_billing', to: 'payment#stripe_billing', as: 'billing'
+  post 'paddle_customer', to: 'payment#paddle_customer', as: 'paddle_customer'
+  get 'charges_history', to: 'payment#charges_history', as: 'charges_history'
 
   # 跨域预检请求
   match '*all', controller: 'application', action: 'cors_preflight_check', via: [:options]
 
   namespace :api do
     namespace :v1 do
+
+      get 'user_info',to: 'info#user_info'
+      get 'payment_info',to: 'info#payment_info'
+      get 'active_subscription_info', to: 'info#active_subscription_info', as: 'active_subscription_info'
+
       resources :info do
         collection do
-          get 'models' => "info#models", as: 'models'
+
         end
       end
     end

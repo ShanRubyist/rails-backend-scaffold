@@ -19,7 +19,10 @@ class ApplicationController < ActionController::API
   private
 
   def user_not_authorized
-    fail 'User not authorized'
+    # fail 'User not authorized'
+    render json: {
+      message: 'You do not has enough credits'
+    }.to_json, status: 403
   end
 
   def cors_set_access_control_headers
@@ -31,7 +34,7 @@ class ApplicationController < ActionController::API
     # 设置浏览器可以读取到的 HTTP 头
     response.headers['Access-Control-Expose-Headers'] = 'Authorization'
 
-    #response.headers['Access-Control-Allow-Methods'] = 'POST, GET, PUT, PATCH, DELETE, OPTIONS'
+    response.headers['Access-Control-Allow-Methods'] = 'POST, GET, PUT, PATCH, DELETE, OPTIONS'
     #response.headers['Access-Control-Max-Age'] = '1728000'
   end
 
