@@ -1,6 +1,6 @@
 class PaddleBillingChargeRefunded
   def call(event)
-    return unless object.action == 'refund'
+    return unless event.action == 'refund'
 
     pay_charge = Pay::PaddleBilling::Charge.sync(event.transaction_id, object: event)
 

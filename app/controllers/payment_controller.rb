@@ -99,7 +99,7 @@ class PaymentController < ApplicationController
       cancel_url: cancel_url,
       payment_intent_data: {
         metadata: {
-          credits: 3
+          credits: credit_of_price(price_id)
         }
       }
     )
@@ -124,10 +124,22 @@ class PaymentController < ApplicationController
         trial_period_days: ENV.fetch('TRIAL_PERIOD_DAYS'),
         metadata: {
           pay_name: "base", # Optional. Overrides the Pay::Subscription name attribute
-          credits: 1
         },
       }
     )
     return checkout_session
   end
+
+ def credit_of_price(price_id)
+   credit = case price_id
+            when ENV.fetch('PRICE_1')
+              ENV.fetch('PRICE_1_CREDIT')
+            when ENV.fetch('PRICE_2')
+              ENV.fetch('PRICE_2_CREDIT')
+            when ENV.fetch('PRICE_3')
+              ENV.fetch('PRICE_3_CREDIT')
+            end
+
+   return credit.to_i
+ end
 end
