@@ -72,6 +72,7 @@ GEM
       msgpack (~> 1.2)
     builder (3.2.4)
     concurrent-ruby (1.2.3)
+    connection_pool (2.4.1)
     crass (1.0.6)
     date (3.3.4)
     debug (1.9.1)
@@ -205,12 +206,19 @@ GEM
     rake (13.1.0)
     rdoc (6.6.3.1)
       psych (>= 4.0.0)
+    redis-client (0.22.2)
+      connection_pool
     reline (0.4.3)
       io-console (~> 0.5)
     responders (3.1.1)
       actionpack (>= 5.2)
       railties (>= 5.2)
     ruby2_keywords (0.0.5)
+    sidekiq (7.2.4)
+      concurrent-ruby (< 2)
+      connection_pool (>= 2.3.0)
+      rack (>= 2.2.4)
+      redis-client (>= 0.19.0)
     snaky_hash (2.0.1)
       hashie
       version_gem (~> 1.1, >= 1.1.1)
@@ -244,6 +252,7 @@ DEPENDENCIES
   pundit
   rack-attack
   rails (~> 7.0.4)
+  sidekiq
   stripe (~> 10.0)
   tzinfo-data
 

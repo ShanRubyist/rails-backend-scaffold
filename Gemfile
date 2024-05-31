@@ -65,3 +65,5 @@ gem "paddle", "~> 2.1"
 gem 'pundit'
 
 gem 'rack-attack'
+
+gem 'sidekiq'

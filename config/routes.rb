@@ -2,6 +2,11 @@ Rails.application.routes.draw do
   mount_devise_token_auth_for 'User', at: 'auth', controllers:
     { omniauth_callbacks: 'users/omniauth_callbacks' }
 
+  # require 'sidekiq/web'
+  # authenticate :user, lambda { |u| u.admin? } do
+  #   mount Sidekiq::Web => '/sidekiq'
+  # end
+
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Defines the root path route ("/")
