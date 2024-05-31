@@ -36,7 +36,10 @@ class PaymentController < ApplicationController
       checkout_session = stripe_checkout_subscription(current_user, params[:price_id], params[:success_url], params[:cancel_url])
     end
 
-    redirect_to checkout_session.url, allow_other_host: true, status: :see_other
+    # redirect_to checkout_session.url, allow_other_host: true, status: :see_other
+    render json: {
+      url: checkout_session.url
+    }
   end
 
   def paddle_customer

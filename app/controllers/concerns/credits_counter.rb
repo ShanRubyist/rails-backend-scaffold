@@ -10,7 +10,7 @@ module CreditsCounter
 
   def total_credits(user)
     user.charges
-        .where(amount_refunded: nil)
+        .where("amount_refunded is null or amount_refunded = 0")
         .inject(0) { |sum, item| sum + item.metadata.fetch("credits").to_i }
   end
 

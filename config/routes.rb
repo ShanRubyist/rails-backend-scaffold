@@ -9,7 +9,7 @@ Rails.application.routes.draw do
 
   post 'token', to: 'users/omniauth_callbacks#token'
 
-  post 'stripe_checkout', to: 'payment#stripe_checkout'#, as: 'checkout'
+  post 'stripe_checkout', to: 'payment#stripe_checkout', as: 'stripe_checkout'
   get 'stripe_billing', to: 'payment#stripe_billing', as: 'billing'
   post 'paddle_customer', to: 'payment#paddle_customer', as: 'paddle_customer'
   get 'charges_history', to: 'payment#charges_history', as: 'charges_history'
