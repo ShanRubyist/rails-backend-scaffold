@@ -67,3 +67,5 @@ gem 'pundit'
 gem 'rack-attack'
 
 gem 'sidekiq'
+
+gem 'kaminari'

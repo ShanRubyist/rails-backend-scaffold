@@ -4,7 +4,7 @@
 # 3、paddle_billing 的 metadata 和refund 是通过猴子补丁的方式，打开Pay::PaddleBilling::Charge类重写sync方式实现的 lib/pay/paddle_billing/charge.rb
 
 class PaymentController < ApplicationController
- before_action :authenticate_user!
+  before_action :authenticate_user!
 
   include PayUtils
 
@@ -62,23 +62,30 @@ class PaymentController < ApplicationController
   end
 
   def charges_history
-    rst = []
-    current_user.charges.order("created_at desc").each do |charge|
-      rst << {
-        created_at: charge.created_at.to_s,
-        updated_at: charge.updated_at.to_s,
-        processor_id: charge.processor_id,
-        subscription_id: charge.subscription_id || '-',
-        processor: current_user.pay_customers.find_by(id: charge.customer_id).processor,
-        amount: charge.amount / 100.0,
-        currency: charge.currency,
-        application_fee_amount: (charge.application_fee_amount || 0) / 100.0,
-        amount_refunded: (charge.amount_refunded || 0) / 100.0,
-        credits: charge.metadata['credits'] || 0,
-      }
-    end
+    params[:page] ||= 1
+    params[:per] ||= 20
 
-    render json: rst.to_json
+    charges = current_user.charges.order("created_at desc").page(params[:page].to_i).per(params[:per].to_i)
+
+    render json: {
+      total: charges.total_count,
+      current_page: charges.current_page,
+      total_pages: charges.total_pages,
+      charges_history: charges.map do |charge|
+        {
+          created_at: charge.created_at.to_s,
+          updated_at: charge.updated_at.to_s,
+          processor_id: charge.processor_id,
+          subscription_id: charge.subscription_id || '-',
+          processor: current_user.pay_customers.find_by(id: charge.customer_id).processor,
+          amount: charge.amount / 100.0,
+          currency: charge.currency,
+          application_fee_amount: (charge.application_fee_amount || 0) / 100.0,
+          amount_refunded: (charge.amount_refunded || 0) / 100.0,
+          credits: charge.metadata['credits'] || 0,
+        }
+      end
+    }
   end
 
   def subscription_history
@@ -133,16 +140,16 @@ class PaymentController < ApplicationController
     return checkout_session
   end
 
- def credit_of_price(price_id)
-   credit = case price_id
-            when ENV.fetch('PRICE_1')
-              ENV.fetch('PRICE_1_CREDIT')
-            when ENV.fetch('PRICE_2')
-              ENV.fetch('PRICE_2_CREDIT')
-            when ENV.fetch('PRICE_3')
-              ENV.fetch('PRICE_3_CREDIT')
-            end
+  def credit_of_price(price_id)
+    credit = case price_id
+             when ENV.fetch('PRICE_1')
+               ENV.fetch('PRICE_1_CREDIT')
+             when ENV.fetch('PRICE_2')
+               ENV.fetch('PRICE_2_CREDIT')
+             when ENV.fetch('PRICE_3')
+               ENV.fetch('PRICE_3_CREDIT')
+             end
 
-   return credit.to_i
- end
+    return credit.to_i
+  end
 end
