@@ -52,7 +52,7 @@ gem 'devise_token_auth'
 
 gem 'omniauth-google-oauth2'
 
-gem 'pay'
+gem 'pay', '~> 7.1.1'
 # To use Stripe, also include:
 gem "stripe", "~> 10.0"
 # To use Braintree + PayPal, also include:
