@@ -30,4 +30,14 @@
 # available at https://guides.rubyonrails.org/i18n.html.
 
 en:
-  hello: "Hello world"
+  charges_history:
+    created_at: "created_at"
+    updated_at: "updated_at"
+    subscription_id: "subscription_id"
+    processor: "processor"
+    processor_id: "processor_id"
+    amount: "amount"
+    currency: "currency"
+    application_fee_amount: "application_fee_amount"
+    amount_refunded: "amount_refunded"
+    credits: "credits"

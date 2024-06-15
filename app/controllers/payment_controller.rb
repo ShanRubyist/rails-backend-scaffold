@@ -73,16 +73,16 @@ class PaymentController < ApplicationController
       total_pages: charges.total_pages,
       charges_history: charges.map do |charge|
         {
-          created_at: charge.created_at.to_s,
-          updated_at: charge.updated_at.to_s,
-          processor_id: charge.processor_id,
-          subscription_id: charge.subscription_id || '-',
-          processor: current_user.pay_customers.find_by(id: charge.customer_id).processor,
-          amount: charge.amount / 100.0,
-          currency: charge.currency,
-          application_fee_amount: (charge.application_fee_amount || 0) / 100.0,
-          amount_refunded: (charge.amount_refunded || 0) / 100.0,
-          credits: charge.metadata['credits'] || 0,
+          I18n.t('charges_history.created_at') => charge.created_at.to_s,
+          I18n.t('charges_history.updated_at') => charge.updated_at.to_s,
+          I18n.t('charges_history.subscription_id') => charge.subscription_id || '-',
+          I18n.t('charges_history.processor') => current_user.pay_customers.find_by(id: charge.customer_id).processor,
+          I18n.t('charges_history.processor_id') => charge.processor_id,
+          I18n.t('charges_history.amount') => charge.amount / 100.0,
+          I18n.t('charges_history.currency') => charge.currency,
+          I18n.t('charges_history.application_fee_amount') => (charge.application_fee_amount || 0) / 100.0,
+          I18n.t('charges_history.amount_refunded') => (charge.amount_refunded || 0) / 100.0,
+          I18n.t('charges_history.credits') => charge.metadata['credits'] || 0,
         }
       end
     }
