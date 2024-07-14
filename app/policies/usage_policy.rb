@@ -1,12 +1,13 @@
 class UsagePolicy < ApplicationPolicy
   include CreditsCounter
+  include DistributedLock
 
   def initialize(user, _record)
     @user = user
   end
 
   def create?
-    return true if !has_payment? || credits_enough? || subscription_valid?
+    return true if !has_payment? || credits_enough?
   end
 
   private
@@ -23,7 +24,13 @@ class UsagePolicy < ApplicationPolicy
     @user.subscriptions.last&.active?
   end
 
-  def credits_enough?
+  def has_left_credits?
     left_credits(@user) > 0
+  end
+
+  def credits_enough?
+    with_redis_lock(@user.id) do
+      has_left_credits? || subscription_valid?
+    end
   end
 end
