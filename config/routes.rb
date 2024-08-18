@@ -34,6 +34,14 @@ Rails.application.routes.draw do
 
         end
       end
+
+      namespace :admin do
+        resources :dashboard do
+          collection do
+            get 'staticstics_info' => 'dashboard#statistics_info'
+          end
+        end
+      end
     end
   end
 end
