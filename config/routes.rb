@@ -26,6 +26,7 @@ Rails.application.routes.draw do
     namespace :v1 do
 
       get 'user_info',to: 'info#user_info'
+      get 'dynamic_urls',to: 'info#dynamic_urls'
       get 'payment_info',to: 'info#payment_info'
       get 'active_subscription_info', to: 'info#active_subscription_info', as: 'active_subscription_info'
 

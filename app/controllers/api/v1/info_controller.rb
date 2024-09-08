@@ -51,4 +51,9 @@ class Api::V1::InfoController < ApplicationController
       end
     }
   end
+
+  def dynamic_urls
+    # render json:
+    #          Lora.all.map { |i| { loc: "/lora/#{i.value}", _i18nTransform: true } }
+  end
 end
