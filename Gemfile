@@ -69,3 +69,5 @@ gem 'rack-attack'
 gem 'sidekiq'
 
 gem 'kaminari'
+
+gem 'googleauth'
