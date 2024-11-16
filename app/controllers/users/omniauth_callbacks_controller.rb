@@ -12,7 +12,7 @@ class Users::OmniauthCallbacksController < DeviseTokenAuth::OmniauthCallbacksCon
     if message == 'deliverCredentials'
       code = data['client_id']
       Rails.cache.write(oauth_token_cache_key(code), data['uid'], expires_in: 1.minute)
-      redirect_to ENV.fetch('REDIRECT_SUCCESS_URL') + "?code=#{code}&origin=#{redirect_url}", allow_other_host: true
+      redirect_to ENV.fetch('REDIRECT_SUCCESS_URL') + "?code=#{code}&origin=#{redirect_url.chomp('/')}", allow_other_host: true
     elsif message == 'authFailure'
       redirect_to ENV.fetch('REDIRECT_FAIL_URL'), allow_other_host: true
     end

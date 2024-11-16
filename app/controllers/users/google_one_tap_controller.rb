@@ -1,7 +1,7 @@
 class Users::GoogleOneTapController < ApplicationController
   def token
     if g_csrf_token_valid?
-      payload = Google::Auth::IDTokens.verify_oidc(params[:credential], aud: ENV.fetch('GOOGLE_CLIENT_ID'))
+      payload = Google::Auth::IDTokens.verify_oidc(params[:credential], aud: ENV.fetch('GOOGLE_KEY'))
       uid = payload['sub']
       if uid
         user = User.find_by(uid: uid)
