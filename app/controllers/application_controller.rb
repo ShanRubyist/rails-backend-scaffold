@@ -46,6 +46,7 @@ class ApplicationController < ActionController::API
   def log_error_and_respond(exception)
     # 将错误信息记录到数据库
     ErrorLog.create(
+      origin_type: 0,
       error_type: exception.class.to_s,
       message: exception.message,
       backtrace: exception.backtrace.join("\n"),
