@@ -56,4 +56,23 @@ class Api::V1::InfoController < ApplicationController
     # render json:
     #          Lora.all.map { |i| { loc: "/lora/#{i.value}", _i18nTransform: true } }
   end
+
+  def log_client_error
+    # 从请求中获取错误信息
+    error_params = params.require(:error).permit(:origin_type, :error_type, :message, :backtrace, :controller_name, :action_name, :user_email)
+
+    # 创建错误日志
+    ErrorLog.create(
+      origin_type: error_params[:origin_type],
+      error_type: error_params[:error_type],
+      message: error_params[:message],
+      backtrace: error_params[:backtrace],
+      controller_name: error_params[:controller_name],
+      action_name: error_params[:action_name],
+      user_email: error_params[:user_email]
+    )
+
+    # 返回成功响应
+    render json: { message: 'Error logged successfully' }, status: 201
+  end
 end

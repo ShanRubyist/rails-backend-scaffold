@@ -16,11 +16,12 @@ ActiveRecord::Schema[7.0].define(version: 2024_12_07_100937) do
   enable_extension "plpgsql"
 
   create_table "error_logs", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "origin_type", default: 0, null: false
     t.string "error_type", null: false
     t.text "message", null: false
     t.text "backtrace", null: false
-    t.string "controller_name", null: false
-    t.string "action_name", null: false
+    t.string "controller_name"
+    t.string "action_name"
     t.string "user_email"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

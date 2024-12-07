@@ -29,6 +29,7 @@ Rails.application.routes.draw do
       get 'user_info',to: 'info#user_info'
       get 'dynamic_urls',to: 'info#dynamic_urls'
       get 'payment_info',to: 'info#payment_info'
+      post 'log_client_error', to: 'info#log_client_error'
       get 'active_subscription_info', to: 'info#active_subscription_info', as: 'active_subscription_info'
 
       resources :info do
@@ -44,6 +45,7 @@ Rails.application.routes.draw do
           end
         end
       end
+
     end
   end
 end
