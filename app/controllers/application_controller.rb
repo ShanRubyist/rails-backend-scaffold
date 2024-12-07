@@ -3,6 +3,7 @@ class ApplicationController < ActionController::API
   include Pundit::Authorization
 
   rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
+  rescue_from StandardError, with: :log_error_and_respond
 
   before_action :cors_set_access_control_headers
   before_action :set_locale
@@ -40,5 +41,20 @@ class ApplicationController < ActionController::API
 
   def set_locale
     I18n.locale = params[:locale] || I18n.default_locale
+  end
+
+  def log_error_and_respond(exception)
+    # 将错误信息记录到数据库
+    ErrorLog.create(
+      error_type: exception.class.to_s,
+      message: exception.message,
+      backtrace: exception.backtrace.join("\n"),
+      controller_name: params[:controller],
+      action_name: params[:action],
+      user_email: current_user&.email
+    )
+
+    # 返回通用错误响应
+    render json: { error: 'Internal Server Error' }, status: 500
   end
 end
