@@ -1,0 +1,65 @@
+# 在 https://github.com/heartcombo/devise/wiki/I18n 上的其他翻译
+
+zh:
+  devise:
+    confirmations:
+      confirmed: "您的电子邮件地址已成功确认。"
+      send_instructions: "您将在几分钟内收到一封电子邮件，其中包含如何确认您的电子邮件地址的说明。"
+      send_paranoid_instructions: "如果您的电子邮件地址存在于我们的数据库中，您将在几分钟内收到一封电子邮件，其中包含如何确认您的电子邮件地址的说明。"
+    failure:
+      already_authenticated: "您已经登录。"
+      inactive: "您的账户尚未激活。"
+      invalid: "无效的 %{authentication_keys} 或密码。"
+      locked: "您的账户已被锁定。"
+      last_attempt: "您的账户将在再次尝试失败后被锁定。"
+      not_found_in_database: "无效的 %{authentication_keys} 或密码。"
+      timeout: "您的会话已过期。请重新登录以继续。"
+      unauthenticated: "您需要登录或注册后才能继续操作。"
+      unconfirmed: "您需要在继续之前确认您的电子邮件地址。"
+    mailer:
+      confirmation_instructions:
+        subject: "确认指令"
+      reset_password_instructions:
+        subject: "重置密码指令"
+      unlock_instructions:
+        subject: "解锁指令"
+      email_changed:
+        subject: "电子邮件已更改"
+      password_change:
+        subject: "密码已更改"
+    omniauth_callbacks:
+      failure: "无法从 %{kind} 认证您，因为“%{reason}”。"
+      success: "已成功从 %{kind} 账户认证。"
+    passwords:
+      no_token: "如果您不是通过密码重置电子邮件来访问此页面的，您无法访问此页面。如果您是通过密码重置电子邮件来的，请确保您使用了提供的完整网址。"
+      send_instructions: "您将在几分钟内收到一封电子邮件，其中包含如何重置密码的说明。"
+      send_paranoid_instructions: "如果您的电子邮件地址存在于我们的数据库中，您将在几分钟内在您的电子邮件地址收到一个密码恢复链接。"
+      updated: "您的密码已成功更改。您现在已登录。"
+      updated_not_active: "您的密码已成功更改。"
+    registrations:
+      destroyed: "再见！您的账户已成功取消。希望不久后再见到您。"
+      signed_up: "欢迎！您已成功注册。"
+      signed_up_but_inactive: "您已成功注册。然而，由于您的账户尚未激活，我们无法登录您的账户。"
+      signed_up_but_locked: "您已成功注册。然而，由于您的账户被锁定，我们无法登录您的账户。"
+      signed_up_but_unconfirmed: "一封带有确认链接的信息已发送到您的电子邮件地址。请点击链接以激活您的账户。"
+      update_needs_confirmation: "您的账户更新成功，但我们需要验证您的新电子邮件地址。请检查您的电子邮件，并遵循确认链接以确认您的新电子邮件地址。"
+      updated: "您的账户已成功更新。"
+      updated_but_not_signed_in: "您的账户已成功更新，但由于您的密码已更改，您需要重新登录。"
+    sessions:
+      signed_in: "登录成功。"
+      signed_out: "退出成功。"
+      already_signed_out: "已成功登出。"
+    unlocks:
+      send_instructions: "您将在几分钟内收到一封电子邮件，其中包含如何解锁您的账户的说明。"
+      send_paranoid_instructions: "如果您的账户存在，您将在几分钟内收到一封电子邮件，其中包含如何解锁它的说明。"
+      unlocked: "您的账户已成功解锁。请登录以继续。"
+  errors:
+    messages:
+      already_confirmed: "已被确认，请尝试登录"
+      confirmation_period_expired: "需要在 %{period} 内确认，请请求新的确认"
+      expired: "已过期，请请求新的确认"
+      not_found: "未找到"
+      not_locked: "未被锁定"
+      not_saved:
+        one: "1个错误阻止了此 %{resource} 被保存："
+        other: "%{count}个错误阻止了此 %{resource} 被保存："

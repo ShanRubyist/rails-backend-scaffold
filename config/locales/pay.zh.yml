@@ -1,0 +1,64 @@
+zh:
+  pay:
+    successful:
+      header: "支付成功"
+      description: "此支付已成功确认。"
+    cancelled:
+      header: "支付已取消"
+      description: "此支付已被取消。"
+    requires_action:
+      header: "确认您的 %{amount} 支付"
+      description: "需要额外确认才能处理您的支付。请通过填写下面的支付详情来确认您的支付。"
+      full_name: "全名"
+      card: "信用或借记卡"
+      button: "支付 %{amount}"
+      name_missing: "请提供您的名字。"
+      success: "支付成功。"
+    all_rights_reserved: "版权所有，保留一切权利。"
+    back: "返回"
+    refund: "退款"
+    line_items:
+      amount: "金额"
+      description: "描述"
+      quantity: "数量"
+      subtotal: "小计"
+      discount: "折扣"
+      tax: "税费"
+      total: "总计"
+      unit_price: "单价"
+      percent_discount: "%{name} (%{percent}% 优惠)"
+      amount_discount: "%{name} (减免 %{amount})"
+    receipt:
+      date: "日期"
+      number: "收据编号"
+      paid: "已支付"
+      payment_method: "支付方式"
+      amount_paid: "支付金额"
+      refunded: "已退款"
+      refunded_on: "于 %{date} 退款"
+    invoice:
+      number: "发票编号"
+      date: "日期"
+      payment_method: "支付方式"
+    errors:
+      action_required: "此支付尝试因需要进一步的操作才能完成而失败。"
+      invalid_payment: "此支付尝试因无效的支付方式而失败。"
+      email_required: "创建客户需要提供电子邮箱地址。"
+      no_processor: "未选择支付处理器。请确保已设置 %{class_name} 的 `processor` 属性为 'stripe' 或 'braintree'。"
+      braintree:
+        authorization: "您提交的数据格式错误且与API不匹配，或者您使用的API密钥可能没有得到授权执行此操作。"
+    user_mailer:
+      receipt:
+        subject: "[%{application}] 支付收据"
+      refund:
+        subject: "[%{application}] 支付已退款"
+      subscription_renewing:
+        subject: "[%{application}] 您的订阅即将续约"
+      payment_action_required:
+        subject: "[%{application}] 请确认您的支付"
+      payment_failed:
+        subject: "[%{application}] 需要操作 – 您的支付失败"
+      subscription_trial_will_end:
+        subject: "[%{application}] 您的试用即将快要结束"
+      subscription_trial_ended:
+        subject: "[%{application}] 您的试用已结束"

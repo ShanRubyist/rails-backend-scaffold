@@ -46,14 +46,15 @@ class Api::V1::Admin::DashboardController < Api::V1::AdminController
                                 .order('cost_credits desc')
                                 .limit(1)
                                 .first
-                                .cost_credits
+                              &.cost_credits
 
     user_top_generated_images = User.joins(:replicated_calls)
                                     .group("users.id")
                                     .select("users.id, users.email, COUNT(*) as call_count")
                                     .order("call_count desc")
                                     .limit(1)
-                                    .first.call_count
+                                    .first
+                                  &.call_count
     render json: {
       total_users: total_users,
       total_paid_users: total_paid_users,
