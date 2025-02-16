@@ -71,3 +71,5 @@ gem 'sidekiq', '< 7.0'
 gem 'kaminari'
 
 gem 'googleauth'
+
+gem 'faraday'
