@@ -73,3 +73,10 @@ gem 'kaminari'
 gem 'googleauth'
 
 gem 'faraday'
+
+gem "ruby-openai"
+
+gem 'replicate-rails', require: 'replicate_rails'
+
+gem "image_processing"
+gem "aws-sdk-s3", require: false
