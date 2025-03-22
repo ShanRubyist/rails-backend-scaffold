@@ -1,8 +1,9 @@
 require 'faraday'
+require 'bot'
 
 module Bot
   class Ali < AIModel
-    def initialize(api_key, api_base_url = 'https://dashscope.aliyuncs.com')
+    def initialize(api_key=ENV.fetch('OPENAI_API_KEY'), api_base_url = 'https://dashscope.aliyuncs.com')
       @api_key = api_key
       @api_base_url = api_base_url
       @path = '/api/v1/services/aigc/text-generation/generation'

@@ -24,6 +24,7 @@ module AiModelConcern
       cost_credits = 0
     end
 
+    # TODO: replicated_calls 表需要重构
     user
       .replicated_calls
       .create_with(data: data, output: output, prompt: prompt, aspect_ratio: aspect_ratio, cost_credits: cost_credits, model: model_name)

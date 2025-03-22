@@ -1,5 +1,5 @@
 module Bot
-  class Replicate < AIModel
+  class Replicate
     def initialize
     end
 

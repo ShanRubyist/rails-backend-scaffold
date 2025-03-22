@@ -5,6 +5,7 @@ class SavePicToOssJob < ApplicationJob
     image = save_to_db(args)
     require 'open-uri'
 
+    # TODO: replicated_calls 表需要重构
     user
       .replicated_calls
       .find_by(predict_id: predict_id)

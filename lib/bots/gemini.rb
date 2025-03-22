@@ -1,8 +1,9 @@
 require 'faraday'
+require 'bot'
 
 module Bot
   class Gemini < AIModel
-    def initialize(api_key, api_base_url = 'https://generativelanguage.googleapis.com')
+    def initialize(api_key=ENV.fetch('GEMINI_API_KEY'), api_base_url = 'https://generativelanguage.googleapis.com')
       @api_key = api_key
       @api_base_url = api_base_url
       @path = '/v1beta/models/gemini-pro:streamGenerateContent?alt=sse&key=' + @api_key

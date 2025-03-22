@@ -1,4 +1,5 @@
 require 'faraday'
+require 'bot'
 
 module Bot
   class Thebai < AIModel

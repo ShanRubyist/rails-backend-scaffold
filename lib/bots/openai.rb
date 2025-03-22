@@ -1,10 +1,11 @@
 require "ruby/openai"
+require 'bot'
 
 module Bot
-  class OpenAI
+  class OpenAI < AIModel
     def initialize(api_key = ENV.fetch('OPENAI_API_KEY'), api_base_url = 'https://api.openai.com/', organization_id = '')
       @client = openai_client(api_key, api_base_url, organization_id)
-      @model = 'openai/o1-mini'
+      @model = 'o1-mini'
     end
 
     def handle(content, prompt = nil, options = {}, &block)
@@ -29,7 +30,6 @@ module Bot
           yield chunk, _bytesize
         end
       end
-
       @client.chat(parameters: parameters)
     end
 
@@ -44,6 +44,7 @@ module Bot
           model: model,
           input: content,
           voice: voice,
+          instructions: instructions, # Optional
           response_format: response_format, # Optional
           speed: speed, # Optional
         }
