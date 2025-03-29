@@ -33,6 +33,7 @@ Rails.application.routes.draw do
       get 'active_subscription_info', to: 'info#active_subscription_info', as: 'active_subscription_info'
 
       post 'gen_video', to: 'ai#gen_video'
+      get 'ai_call_info', to: 'ai#ai_call_info'
 
       resources :info do
         collection do
@@ -44,6 +45,7 @@ Rails.application.routes.draw do
         resources :dashboard do
           collection do
             get 'staticstics_info' => 'dashboard#statistics_info'
+            get 'ai_call_info' => 'dashboard#ai_call_info'
           end
         end
       end

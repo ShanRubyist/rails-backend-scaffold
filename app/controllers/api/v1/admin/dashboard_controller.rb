@@ -85,6 +85,44 @@ class Api::V1::Admin::DashboardController < Api::V1::AdminController
       user_top_generated_images: user_top_generated_images
     }.to_json
   end
+
+  def ai_call_info
+    params[:page] ||= 1
+    params[:per] ||= 20
+
+    ai_calls = AiCall
+                 .order("created_at desc")
+                 .page(params[:page].to_i)
+                 .per(params[:per].to_i)
+
+    result = ai_calls.map do |item|
+      {
+        input_media: (
+          item.input_media.map do |media|
+            url_for(media)
+          end
+        ),
+        generated_media: (
+          item.generated_media.map do |media|
+            url_for(media)
+          end
+        ),
+        prompt: item.prompt,
+        status: item.status,
+        input: item.input,
+        data: item.data,
+        created_at: item.created_at,
+        cost_credits: item.cost_credits,
+        system_prompt: item.system_prompt,
+        business_type: item.business_type
+      }
+    end
+
+    render json: {
+      total: ai_calls.total_count,
+      histories: result
+    }
+  end
 end
 
 
