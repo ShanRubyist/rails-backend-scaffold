@@ -10,10 +10,11 @@ module Bot
       @model = ''
     end
 
-    def handle(message, prompt = nil, options = {}, &block)
+    def text_api(message, options = {}, &block)
       @stream = options.fetch(:stream, true)
       @temperature = options.fetch(:temperature, 0.95)
       @top_p = options.fetch(:top_p, 0.8)
+      prompt = options.fetch(:prompt, nil)
 
       client.post(@path) do |req|
         req.headers['Authorization'] = "Bearer #{@api_key}"
@@ -46,7 +47,7 @@ module Bot
       @client ||= Faraday.new(url: @api_base_url)
     end
 
-    def resp(data)
+    def text_resp(data)
       rst = []
       data.scan(/(?:data|error):\s*(\{.*\})/i).flatten.each do |data|
         msg = JSON.parse(data)

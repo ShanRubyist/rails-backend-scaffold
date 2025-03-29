@@ -10,10 +10,11 @@ module Bot
         @path = '/v1/chat/completions'
       end
 
-      def handle(message, prompt = nil, options = {}, &block)
+      def text_api(message, options = {}, &block)
         @stream = options.fetch(:stream, true)
         @temperature = options.fetch(:temperature, 0.5)
         @top_p = options.fetch(:top_p, 0.5)
+        prompt = options.fetch(:prompt, nil)
 
         client.post(@path) do |req|
           req.headers['Content-Type'] = 'application/json'
@@ -45,7 +46,7 @@ module Bot
         @client ||= Faraday.new(url: @api_base_url)
       end
 
-      def resp(data)
+      def text_resp(data)
         # 接口返回的 HTTP STATUS 还是 200，只能根据返回内容判断
         fail data unless data.scan(/error_code/).empty?
 

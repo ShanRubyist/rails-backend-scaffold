@@ -10,12 +10,13 @@ module Bot
       @model = nil
     end
 
-    def handle(message, prompt = nil, options = {}, &block)
+    def text_api(message, options = {}, &block)
       @temperature = options.fetch(:temperature, 0.95)
       @top_p = options.fetch(:top_p, 0.8)
       @enable_search = true
       @incremental_output = true
       @stream = true
+      prompt = options.fetch(:prompt, nil)
 
       client.post(@path) do |req|
         req.headers['Content-Type'] = 'application/json'
@@ -57,7 +58,7 @@ module Bot
       @client ||= Faraday.new(url: @api_base_url)
     end
 
-    def resp(data)
+    def text_resp(data)
       rst = []
       data.scan(/(?:data|error):\s*(\{.*\})/i).flatten.each do |data|
         json = JSON.parse(data)

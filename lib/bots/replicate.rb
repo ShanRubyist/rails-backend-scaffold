@@ -3,7 +3,9 @@ module Bot
     def initialize
     end
 
-    def generate_image(prompt, model_name, aspect_ratio)
+    def image_api(prompt, options={})
+      aspect_ratio = options.fetch(:aspect_ratio, '1:1')
+      model_name = options.fetch(:model_name)
       model = Replicate.client.retrieve_model(model_name)
 
       version = model.latest_version
@@ -21,7 +23,7 @@ module Bot
 
       ensure
         # params.permit(:prompt, :aspect_ratio, :model, :replicate)
-        SavePicToOssJob.perform_later({ user: current_user, model_name: model_name, aspect_ratio: aspect_ratio, prompt: prompt, data: data })
+        # SavePicToOssJob.perform_later({ user: current_user, model_name: model_name, aspect_ratio: aspect_ratio, prompt: prompt, data: data })
       end
 
       prediction.output

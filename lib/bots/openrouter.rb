@@ -7,14 +7,16 @@ module Bot
       @api_base_url = api_base_url
       @path = '/api/v1/chat/completions'
       @model = 'openai/o1-mini'
+      @buff = ''
     end
 
-    def handle(message, prompt = nil, options = {}, &block)
+    def text_api(message, options = {}, &block)
       @stream = options.fetch(:stream, false)
       @temperature = options.fetch(:temperature, 0.95)
       @top_p = options.fetch(:top_p, 0.8)
+      prompt = options.fetch(:prompt, nil)
 
-      client.post(@path) do |req|
+      resp = client.post(@path) do |req|
         req.headers['Authorization'] = "Bearer #{@api_key}"
         req.headers['Content-Type'] = 'application/json'
         req.headers['HTTP-Referer'] = ENV.fetch('REDIRECT_SUCCESS_URL') # Optional, for including your app on open_router.ai rankings.
@@ -40,6 +42,8 @@ module Bot
       # else
       # @error_message = 'Failed to get data'
       # end
+
+      JSON.load(resp.body) unless @stream
     end
 
     private
@@ -48,8 +52,9 @@ module Bot
       @client ||= Faraday.new(url: @api_base_url)
     end
 
-    def resp(data)
+    def text_resp(data)
       rst = []
+      data = @buff.force_encoding('ASCII-8BIT') + data unless @buff.empty?
       data.scan(/(?:data|error):\s*(\{.*\})/i).flatten.each do |data|
         msg = JSON.parse(data)
         return if msg.empty?

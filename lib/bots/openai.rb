@@ -8,11 +8,12 @@ module Bot
       @model = 'o1-mini'
     end
 
-    def handle(content, prompt = nil, options = {}, &block)
+    def text_api(content, options = {}, &block)
       @model = options.fetch(:model, @model)
       @temperature = options.fetch(:temperature, 1)
       @top_p = options.fetch(:top_p, 1)
       @stream = options.fetch(:stream, false)
+      prompt = options.fetch(:prompt, nil)
 
       message = []
       message.push({ "role": "system", "content": prompt }) if prompt
@@ -34,7 +35,9 @@ module Bot
     end
 
     # https://platform.openai.com/docs/api-reference/audio/createSpeech
-    def generate_audio(content, model = 'gpt-4o-mini-tts', voice = 'alloy', options = {})
+    def audio_api(content, options = {})
+      model = options.fetch(:model, 'gpt-4o-mini-tts')
+      voice = options.fetch(:voice, 'alloy')
       instructions = options.fetch(:instructions, nil)
       speed = options.fetch(:speed, 1.0)
       response_format = options.fetch(:response_format, "mp3")
