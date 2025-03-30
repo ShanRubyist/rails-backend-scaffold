@@ -54,6 +54,13 @@ module Bot
       )
 
       response
+      # Controller 中可以设置响应头为音频格式
+      # send_data(
+      #   audio_data,
+      #   filename: "tts_audio.mp3",
+      #   type: "audio/mpeg",
+      #   disposition: "inline"
+      # )
     end
 
     private

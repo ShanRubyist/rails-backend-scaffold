@@ -5,3 +5,16 @@
 #
 #   movies = Movie.create([{ name: "Star Wars" }, { name: "Lord of the Rings" }])
 #   Character.create(name: "Luke", movie: movies.first)
+
+[
+  {
+    name: '文字与写作',
+    slug: 'text',
+  },
+  {
+    name: '图像',
+    slug: 'image'
+  }
+].each do |tag|
+  Tag.create name: tag[:name], slug: tag[:slug]
+end

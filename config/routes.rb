@@ -25,7 +25,6 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :v1 do
-
       get 'user_info',to: 'info#user_info'
       get 'dynamic_urls',to: 'info#dynamic_urls'
       get 'payment_info',to: 'info#payment_info'
@@ -50,6 +49,32 @@ Rails.application.routes.draw do
         end
       end
 
+      resources :tools do
+        collection do
+          get :published
+          get :unpublished
+          get :search
+          get :tool_alternatives
+        end
+
+        member do
+          post :publish
+          post :unpublish
+        end
+      end
+
+      resources :tags do
+        member do
+          get :tools
+        end
+      end
+
+      resources :scraped_infos do
+        collection do
+          get :tdh
+          get :website
+        end
+      end
     end
   end
 end
