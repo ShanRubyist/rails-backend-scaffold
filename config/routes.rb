@@ -55,6 +55,8 @@ Rails.application.routes.draw do
           get :unpublished
           get :search
           get :tool_alternatives
+          get :tag_tools
+          get :monthly_tools
         end
 
         member do

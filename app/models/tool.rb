@@ -30,11 +30,15 @@ class Tool < ApplicationRecord
 
   def alternatives
     Tool.published.joins(:tags)
-        .where(tags: { id: tags.select(:id) })  # 匹配目标 tool 的 tags
-        .where.not(id: id)                      # 排除自己
-        .group(:id)                             # 按 tool 分组
+        .where(tags: { id: tags.select(:id) }) # 匹配目标 tool 的 tags
+        .where.not(id: id) # 排除自己
+        .group(:id) # 按 tool 分组
         .select('tools.*, COUNT(tags.id) AS common_tags_count') # 计算共同 tag 数量
-        .order(common_tags_count: :desc, created_at: :asc)     # 排序规则
+        .order(common_tags_count: :desc, created_at: :asc) # 排序规则
         .limit(5)
+  end
+
+  def self.monthly_tools(date)
+    Tool.where(created_at: date.beginning_of_month..date.end_of_month)
   end
 end 

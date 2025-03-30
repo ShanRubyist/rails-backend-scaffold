@@ -53,8 +53,7 @@ class Api::V1::InfoController < ApplicationController
   end
 
   def dynamic_urls
-    # render json:
-    #          Lora.all.map { |i| { loc: "/lora/#{i.value}", _i18nTransform: true } }
+    render json: previous_month_range.map { |i| { loc: '/month/' + i, _i18nTransform: true } }
   end
 
   def log_client_error
@@ -74,5 +73,13 @@ class Api::V1::InfoController < ApplicationController
 
     # 返回成功响应
     render json: { message: 'Error logged successfully' }, status: 201
+  end
+
+  private
+  def previous_month_range(count: 5)
+    current_month = Time.current.beginning_of_month
+    (1..count).map do |i|
+      (current_month - i.months).strftime("%Y-%m") # 格式化为 "2023-07"
+    end
   end
 end
