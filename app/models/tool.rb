@@ -29,7 +29,7 @@ class Tool < ApplicationRecord
   end
 
   def alternatives
-    Tool.joins(:tags)
+    Tool.published.joins(:tags)
         .where(tags: { id: tags.select(:id) })  # 匹配目标 tool 的 tags
         .where.not(id: id)                      # 排除自己
         .group(:id)                             # 按 tool 分组
