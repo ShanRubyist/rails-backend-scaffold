@@ -6,6 +6,10 @@ module Api
         published
       end
 
+      def search
+        published
+      end
+
       def show
         @tool = Tool.published.find_by(name: params[:id])
         if @tool
@@ -35,6 +39,7 @@ module Api
 
       def tool_alternatives
         @tool = Tool.published.find_by(name: params[:name])
+
         if @tool
           render json: (
             @tool.alternatives.map do |alt|
@@ -55,21 +60,36 @@ module Api
 
       # GET /api/v1/tools/published
       def published
+        params[:page] ||= 1
+        params[:per] ||= 20
+
         @tools = Tool.published
-        render json: (@tools.map do |tool|
-          tool_data = tool.scraped_infos.first.data
-          {
-            id: tool.id,
-            name: tool.name,
-            url: url_with_utm(tool.url),
-            logo: tool_data['logo'],
-            description: tool.description,
-            tags: tool.tags.map(&:name),
-            # likes: 13500,
-            # growth: 27.52,
-            # featured: false
-          }
-        end)
+        @tools = @tools.search_by_query(params[:query]) if params[:query]
+        @tools = @tools.search_by_tags(params[:tags]) if params[:tags]
+        @tools = @tools.order_by(params[:sort_by]) if params[:sort_by]
+        @tools = @tools.page(params[:page].to_i).per(params[:per].to_i)
+
+        render json: {
+          total: @tools.total_count,
+          current_page: @tools.current_page,
+          total_pages: @tools.total_pages,
+          tools: (
+            @tools.map do |tool|
+              tool_data = tool.scraped_infos.first.data
+              {
+                id: tool.id,
+                name: tool.name,
+                url: url_with_utm(tool.url),
+                logo: tool_data['logo'],
+                description: tool.description,
+                tags: tool.tags.map(&:name),
+                # likes: 13500,
+                # growth: 27.52,
+                # featured: false
+              }
+            end
+          )
+        }
       end
 
       # GET /api/v1/tools/unpublished
@@ -90,31 +110,6 @@ module Api
         @tool = Tool.find(params[:id])
         @tool.update(published: false)
         render json: @tool
-      end
-
-      # GET /api/v1/tools/search
-      def search
-        @tools = Tool.published
-        @tools = @tools.search_by_query(params[:query]) if params[:query]
-        @tools = @tools.search_by_tags(params[:tags]) if params[:tags]
-        @tools = @tools.order_by(params[:sort_by]) if params[:sort_by]
-
-        render json: (
-          @tools.map do |tool|
-            tool_data = tool.scraped_infos.first.data
-            {
-              id: tool.id,
-              name: tool.name,
-              url: url_with_utm(tool.url),
-              logo: tool_data['logo'],
-              description: tool.description,
-              tags: tool.tags.map(&:name),
-              # likes: 13500,
-              # growth: 27.52,
-              # featured: false
-            }
-          end
-        )
       end
 
       private

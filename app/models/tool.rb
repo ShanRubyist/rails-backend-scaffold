@@ -35,5 +35,6 @@ class Tool < ApplicationRecord
         .group(:id)                             # 按 tool 分组
         .select('tools.*, COUNT(tags.id) AS common_tags_count') # 计算共同 tag 数量
         .order(common_tags_count: :desc, created_at: :asc)     # 排序规则
+        .limit(5)
   end
 end 
