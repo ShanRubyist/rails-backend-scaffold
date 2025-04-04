@@ -31,6 +31,7 @@ Rails.application.routes.draw do
       post 'log_client_error', to: 'info#log_client_error'
       get 'active_subscription_info', to: 'info#active_subscription_info', as: 'active_subscription_info'
 
+      post 'gen_image', to: 'ai#gen_image'
       post 'gen_video', to: 'ai#gen_video'
       get 'ai_call_info', to: 'ai#ai_call_info'
 

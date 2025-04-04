@@ -1,12 +1,12 @@
 module Bot
-  class Replicate
+  class Replicate < AIModel
     def initialize
     end
 
     def image_api(prompt, options={})
       aspect_ratio = options.fetch(:aspect_ratio, '1:1')
       model_name = options.fetch(:model_name)
-      model = Replicate.client.retrieve_model(model_name)
+      model = ::Replicate.client.retrieve_model(model_name)
 
       version = model.latest_version
       begin
