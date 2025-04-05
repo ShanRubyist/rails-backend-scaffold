@@ -46,6 +46,7 @@ Rails.application.routes.draw do
           collection do
             get 'staticstics_info' => 'dashboard#statistics_info'
             get 'ai_call_info' => 'dashboard#ai_call_info'
+            get 'error_log', to: 'dashboard#error_log'
           end
         end
       end

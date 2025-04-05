@@ -124,9 +124,30 @@ class Api::V1::Admin::DashboardController < Api::V1::AdminController
       histories: result
     }
   end
+
+  def error_log
+    params[:page] ||= 1
+    params[:per] ||= 20
+
+    error_log = ErrorLog
+                  .order("created_at desc")
+                  .page(params[:page].to_i)
+                  .per(params[:per].to_i)
+
+
+    render json: {
+      total: error_log.total_count,
+      error_log: error_log.map do |log|
+        {
+          # id: log.id,
+          type: log.error_type,
+          message: log.message,
+          controller_name: log.controller_name,
+          action_name: log.action_name,
+          email: log.user_email,
+          created_at: log.created_at,
+        }
+      end
+    }
+  end
 end
-
-
-
-
-
