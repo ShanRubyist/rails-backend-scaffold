@@ -9,20 +9,14 @@ module Bot
       model = ::Replicate.client.retrieve_model(model_name)
 
       version = model.latest_version
-      begin
-        # webhook_url = "https://" + ENV.fetch("HOST") + "/replicate/webhook"
-        prediction = version.predict(prompt: prompt, aspect_ratio: aspect_ratio, disable_safety_checker: true,
-                                     image: options.fetch(:image),
-                                     go_fast: true,
-                                     guidance_scale: 10,
-                                     prompt_strength: 0.77,
-                                     num_inference_steps: 38
-        ) #, safety_tolerance: 5)
-
-      ensure
-        # params.permit(:prompt, :aspect_ratio, :model, :replicate)
-        # SavePicToOssJob.perform_later({ user: current_user, model_name: model_name, aspect_ratio: aspect_ratio, prompt: prompt, data: data })
-      end
+      # webhook_url = "https://" + ENV.fetch("HOST") + "/replicate/webhook"
+      prediction = version.predict(prompt: prompt, aspect_ratio: aspect_ratio, disable_safety_checker: true,
+                                   image: options.fetch(:image),
+                                   go_fast: true,
+                                   guidance_scale: 10,
+                                   prompt_strength: 0.77,
+                                   num_inference_steps: 38
+      ) #, safety_tolerance: 5)
 
       prediction
     end
