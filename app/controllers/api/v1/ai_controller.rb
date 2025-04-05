@@ -13,6 +13,8 @@ class Api::V1::AiController < UsageController
     image = params['image']
     raise 'image can not be empty' unless image.present?
 
+    model_name = 'aaronaftab/mirage-ghibli'
+
     conversation = current_user.conversations.create
     ai_call = conversation.ai_calls.create(
       task_id: SecureRandom.uuid,
@@ -22,32 +24,39 @@ class Api::V1::AiController < UsageController
       "cost_credits": current_cost_credits)
 
     if type.to_i == 0
-      require 'open-uri'
-      ai_call.input_media.attach(io: image.tempfile,
+      # OSS
+      SaveToOssJob.perform_now(ai_call,
+                               :input_media,
+                               {
+                                 io: image.tempfile,
                                  filename: image.original_filename + Time.now.to_s,
-                                 content_type: image.content_type)
+                                 content_type: image.content_type
+                               }
+      )
       image = url_for(ai_call.input_media.last)
     end
 
     ai_bot = Bot::Replicate.new
+    task = ai_bot.generate_image(prompt, image: image, model_name: model_name)
 
-    # TODO:需要接受block，init 和更新ai_call
-    images = ai_bot.generate_image(prompt, image: image, model_name: 'aaronaftab/mirage-ghibli')
-    image = images.first
+    # query task status
+    images = ai_bot.query_image_task(task) do |h|
+      ai_call.update_ai_call_status(h)
+    end
 
     # OSS
-    # TODO: jobs
     require 'open-uri'
-    ai_call.generated_media.attach(io: URI.open(image),
-                                   filename: URI(image).path.split('/').last,
-                                   content_type: "image/jpeg")
+    SaveToOssJob.perform_later(ai_call,
+                               :generated_media,
+                               {
+                                 io: images.first,
+                                 filename: URI(image).path.split('/').last,
+                                 content_type: "image/jpeg"
+                               }
+    )
 
     render json: {
-      images: (
-        ai_call.generated_media.map do |i|
-          url_for(i)
-        end
-      )
+      images: images
     }
   end
 
@@ -74,16 +83,17 @@ class Api::V1::AiController < UsageController
 
     # OSS
     require 'open-uri'
-    ai_call.generated_media.attach(io: URI.open(video),
-                                   filename: URI(video).path.split('/').last,
-                                   content_type: "video/mp4")
+    SaveToOssJob.perform_later(ai_call,
+                               :generated_media,
+                               {
+                                 io: URI.open(video),
+                                 filename: URI(video).path.split('/').last,
+                                 content_type: "video/mp4"
+                               }
+    )
 
     render json: {
-      videos: (
-        ai_call.generated_media.map do |i|
-          url_for(i)
-        end
-      )
+      videos: [video]
     }
   end
 

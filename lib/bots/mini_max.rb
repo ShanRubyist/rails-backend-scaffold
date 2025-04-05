@@ -99,7 +99,7 @@ module Bot
         h = JSON.parse(resp.body)
         if h['status'] == 'Sucess'
           return {
-            stauts: 'success',
+            status: 'success',
             video: retrieve_video_file(h['file_id']),
             data: h
           }
