@@ -49,6 +49,12 @@ Rails.application.routes.draw do
             get 'staticstics_info' => 'dashboard#statistics_info'
             get 'ai_call_info' => 'dashboard#ai_call_info'
             get 'error_log', to: 'dashboard#error_log'
+            get 'users', to: 'dashboard#users'
+            get 'pay_webhooks', to: 'dashboard#pay_webhooks'
+            post 'rerun_pay_webhook', to: 'dashboard#rerun_pay_webhook'
+            get 'pay_orders', to: 'dashboard#pay_orders'
+            get 'origin_orders', to: 'dashboard#origin_orders'
+            post 'maintenance_mode', to: 'dashboard#maintenance_mode'
           end
         end
       end

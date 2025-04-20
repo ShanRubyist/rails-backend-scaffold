@@ -1,7 +1,8 @@
 require 'bot'
 
 class Api::V1::AiController < UsageController
-  skip_before_action :check_credits, only: [:ai_call_info]
+  skip_around_action :check_credits, only: [:ai_call_info]
+  skip_before_action :check_if_maintenance_mode, only: [:ai_call_info]
 
   def gen_image
     type = params['type']

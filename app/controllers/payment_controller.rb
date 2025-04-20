@@ -4,6 +4,7 @@
 # 3、paddle_billing 的 metadata 和refund 是通过猴子补丁的方式，打开Pay::PaddleBilling::Charge类重写sync方式实现的 lib/pay/paddle_billing/charge.rb
 
 class PaymentController < ApplicationController
+  before_action :check_if_maintenance_mode, only: [:stripe_checkout, :creem_checkout, :paddle_customer]
   before_action :authenticate_user!, except: [:creem_callback]
 
   include PayUtils
