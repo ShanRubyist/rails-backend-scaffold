@@ -40,7 +40,7 @@ class Rack::Attack
   # Throttle POST requests to /login by IP address
   #
   # Key: "rack::attack:#{Time.now.to_i/:period}:logins/ip:#{req.ip}"
-  throttle('logins/ip', limit: 5, period: 20.seconds) do |req|
+  throttle('logins/ip', limit: 10, period: 20.seconds) do |req|
     if req.path == '/auth/sign_in' && req.post?
       req.ip
     end
@@ -54,7 +54,7 @@ class Rack::Attack
   # throttle logins for another user and force their login requests to be
   # denied, but that's not very common and shouldn't happen to you. (Knock
   # on wood!)
-  throttle('error_logs', limit: 1, period: 10.minutes) do |req|
+  throttle('error_logs', limit: 60, period: 1.hour) do |req|
     if req.path == '/api/v1/log_client_error' && req.post?
       # Normalize the email, using the same logic as your authentication process, to
       # protect against rate limit bypasses. Return the normalized email if present, nil otherwise.
