@@ -29,7 +29,6 @@ module Pay
         if resp.success?
           object = JSON.load(resp.body)
 
-
           fail 'this order has multi transactions ' if object['items'].length > 1
           object = object['items'].first
 
@@ -37,8 +36,6 @@ module Pay
           return if object['customer']&.blank?
 
           pay_customer = creem_customer(object['customer'])
-          puts '*'*100
-          puts pay_customer
           return unless pay_customer
 
           if record.event_type == "checkout.completed"
@@ -51,8 +48,7 @@ module Pay
             #   Pay::PaddleBilling::PaymentMethod.sync(pay_customer: pay_customer, attributes: object.payments.first)
             #   return
             # end
-            puts '*'*100
-            puts object
+
             attrs = {
               amount: object['amount'],
               # created_at: object['created_at'],
