@@ -19,6 +19,8 @@ Rails.application.routes.draw do
   get 'stripe_billing', to: 'payment#stripe_billing', as: 'billing'
   post 'paddle_customer', to: 'payment#paddle_customer', as: 'paddle_customer'
   get 'charges_history', to: 'payment#charges_history', as: 'charges_history'
+  post 'creem_checkout', to: 'payment#creem_checkout', as: 'creem_checkout'
+  post 'creem_callback', to: 'payment#creem_callback', as: 'creem_callback'
 
   # 跨域预检请求
   match '*all', controller: 'application', action: 'cors_preflight_check', via: [:options]
