@@ -53,13 +53,12 @@ module Bot
       # end
     end
 
-    # TODO: Callback 方式还不支持
     def video_api(message, options = {})
       path = options.fetch(:path, '/v1/video_generation')
       model = options.fetch(:model, 'T2V-01-Director')
       prompt_optimizer = options.fetch(:prompt_optimizer, nil)
       first_frame_image = options.fetch(:first_frame_image, nil)
-      callback_url = options.fetch(:callback_url, nil)
+      callback_url = options.fetch(:callback_url, "https://#{ENV.fetch('HOST')}/api/v1/gen_callback")
 
       resp = client.post(path) do |req|
         req.params['GroupId'] = @group_id
@@ -80,6 +79,24 @@ module Bot
         return h['task_id']
       else
         fail h.to_json
+      end
+    end
+
+    def callback
+      return { 'challenge': param['challenge'] } if param['challenge']
+
+      return unless param['status'] != 'success' && param['task_status'] != 'failed'
+
+      task_id = param['task_id']
+      ai_call = AiCall.find_by_task_id(task_id)
+
+      if ai_call
+        payload = param
+        payload['video'] = retrieve_video_file(param['file_id'])
+        ai_call.update!(
+          status: param['task_status'],
+          data: payload
+        )
       end
     end
 

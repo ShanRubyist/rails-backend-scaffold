@@ -7,6 +7,8 @@ Rails.application.routes.draw do
   #   mount Sidekiq::Web => '/sidekiq'
   # end
 
+  mount ReplicateRails::Engine => "/replicate/webhook"
+
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Defines the root path route ("/")
@@ -35,6 +37,7 @@ Rails.application.routes.draw do
 
       post 'gen_image', to: 'ai#gen_image'
       post 'gen_video', to: 'ai#gen_video'
+      post 'gen_callback', to: 'ai#gen_callback'
       get 'ai_call_info', to: 'ai#ai_call_info'
 
       resources :info do

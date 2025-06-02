@@ -9,14 +9,36 @@ module Bot
       model = ::Replicate.client.retrieve_model(model_name)
 
       version = model.latest_version
-      # webhook_url = "https://" + ENV.fetch("HOST") + "/replicate/webhook"
+
       prediction = version.predict(prompt: prompt, aspect_ratio: aspect_ratio, disable_safety_checker: true,
                                    image: options.fetch(:image),
-                                   go_fast: true,
-                                   guidance_scale: 10,
-                                   prompt_strength: 0.77,
-                                   num_inference_steps: 38
-      ) #, safety_tolerance: 5)
+      # go_fast: true,
+      # guidance_scale: 10,
+      # prompt_strength: 0.77,
+      # num_inference_steps: 38,
+      # afety_tolerance: 5,
+      )
+
+      prediction
+    end
+
+    def video_api(prompt, options = {})
+      aspect_ratio = options.fetch(:aspect_ratio, '1:1')
+      model_name = options.fetch(:model_name)
+      model = ::Replicate.client.retrieve_model(model_name)
+
+      version = model.latest_version
+      webhook_url = "https://" + ENV.fetch("HOST") + "/replicate/webhook"
+
+      prediction = version.predict(
+        {
+          prompt: prompt,
+          aspect_ratio: aspect_ratio,
+          disable_safety_checker: true,
+          image: options.fetch(:image),
+        },
+        webhook_url
+      )
 
       prediction
     end

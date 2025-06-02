@@ -11,6 +11,7 @@ module Bot
     def video_api(message, options = {})
       path = options.fetch(:path, '/v1/videos/text2video')
       model = options.fetch(:model, 'kling-v1')
+      callback_url = options.fetch(:callback_url, "https://#{ENV.fetch('HOST')}/api/v1/gen_callback")
 
       resp = client.post(path) do |req|
         req.headers['Content-Type'] = 'application/json'
@@ -19,6 +20,7 @@ module Bot
         req.body = {
           model: model,
           prompt: message,
+          callback_url: callback_url
         }.to_json
       end
       h = JSON.parse(resp.body)
@@ -26,6 +28,22 @@ module Bot
         return h['data']['task_id']
       else
         fail h.to_json
+      end
+    end
+
+    def callback
+      return unless param['task_status'] != 'succeed' && param['task_status'] != 'failed'
+
+      task_id = param['task_id']
+      ai_call = AiCall.find_by_task_id(task_id)
+
+      if ai_call
+        payload = param
+        payload['video'] = payload['task_result']['videos']&.first['url'] rescue nil
+        ai_call.update!(
+          status: param['task_status'],
+          data: payload
+        )
       end
     end
 

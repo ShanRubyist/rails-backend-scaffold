@@ -98,6 +98,22 @@ class Api::V1::AiController < UsageController
     }
   end
 
+  def gen_callback
+    ai_bot = Bot::Fal.new
+    rst = ai_bot.callback
+    
+    if rst
+      # For HaiLuo Video
+      if rst.class == String
+        return json: rst
+      else
+        head :ok
+      end
+    else
+      head :bad_request
+    end
+  end
+
   def ai_call_info
     params[:page] ||= 1
     params[:per] ||= 20
