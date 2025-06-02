@@ -34,19 +34,21 @@ module Bot
       end
     end
 
-    def callback
-      # return if param['status'] != 'OK'
+    def callback(payload)
+      # return if payload['status'] != 'OK'
 
-      request_id = param['request_id']
+      request_id = payload['request_id']
       ai_call = AiCall.find_by_task_id(request_id)
 
       if ai_call
-        payload = param['payload']
-        payload['video'] = payload['videos']&.first['url'] rescue nil
+        payload['video'] = payload['payload']['videos']&.first['url'] rescue nil
         ai_call.update!(
           status: 'success',
           data: payload
         )
+        return [ai_call, payload['video']]
+      else
+        fail "[FAL API]task id not exist"
       end
     end
 

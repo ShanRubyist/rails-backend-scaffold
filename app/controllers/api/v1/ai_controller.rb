@@ -37,7 +37,6 @@ class Api::V1::AiController < UsageController
       image = url_for(ai_call.input_media.last)
     end
 
-    ai_bot = Bot::Replicate.new
     task = ai_bot.generate_image(prompt, image: image, model_name: model_name)
 
     # query task status
@@ -65,7 +64,6 @@ class Api::V1::AiController < UsageController
     conversation = current_user.conversations.create
 
     # generate video task
-    ai_bot = Bot::Fal.new
     task_id = ai_bot.generate_video(prompt,
                                     image_url: params[:image_url],
                                     path: params[:path])
@@ -78,30 +76,29 @@ class Api::V1::AiController < UsageController
       "cost_credits": current_cost_credits)
 
     # query video task status
-    video = ai_bot.query_video_task(task_id) do |h|
-      ai_call.update_ai_call_status(h)
-    end
+    # video = ai_bot.query_video_task(task_id) do |h|
+    #   ai_call.update_ai_call_status(h)
+    # end
 
     # OSS
-    require 'open-uri'
-    SaveToOssJob.perform_later(ai_call,
-                               :generated_media,
-                               {
-                                 io: URI.open(video),
-                                 filename: URI(video).path.split('/').last,
-                                 content_type: "video/mp4"
-                               }
-    )
+    # require 'open-uri'
+    # SaveToOssJob.perform_later(ai_call,
+    #                            :generated_media,
+    #                            {
+    #                              io: URI.open(video),
+    #                              filename: URI(video).path.split('/').last,
+    #                              content_type: "video/mp4"
+    #                            }
+    # )
 
     render json: {
-      videos: [video]
+      task_id: task_id
     }
   end
 
   def gen_callback
-    ai_bot = Bot::Fal.new
-    rst = ai_bot.callback
-    
+    rst = ai_bot.webhook_callback(params)
+
     if rst
       # For HaiLuo Video
       if rst.class == String
@@ -112,6 +109,24 @@ class Api::V1::AiController < UsageController
     else
       head :bad_request
     end
+  end
+
+  def gen_task_status
+    task_id = params['task_id']
+    ai_call = AiCall.find_by_task_id(task_id)
+
+    if ai_call
+
+      payload = ai_call.data
+
+      render json: {
+        status: payload['status'],
+        video: payload['video']
+      }
+    else
+      fail "[Controller]task id not exist"
+    end
+
   end
 
   def ai_call_info
@@ -152,4 +167,9 @@ class Api::V1::AiController < UsageController
     }
   end
 
+  private
+
+  def ai_bot
+    Bot::Fal.new
+  end
 end

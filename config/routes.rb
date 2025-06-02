@@ -37,7 +37,8 @@ Rails.application.routes.draw do
 
       post 'gen_image', to: 'ai#gen_image'
       post 'gen_video', to: 'ai#gen_video'
-      post 'gen_callback', to: 'ai#gen_callback'
+      post 'gen_callback', to: 'ai#gen_callback'  #除了replicate以外
+      get 'gen_task_status', to: 'ai#gen_task_status'
       get 'ai_call_info', to: 'ai#ai_call_info'
 
       resources :info do

@@ -54,6 +54,22 @@ module Bot
       rst[:video]
     end
 
+    def webhook_callback(payload)
+      ai_call, video = callback(payload)
+
+      # OSS
+      require 'open-uri'
+      SaveToOssJob.perform_later(ai_call,
+                                 :generated_media,
+                                 {
+                                   io: URI.open(video),
+                                   filename: URI(video).path.split('/').last,
+                                   content_type: "video/mp4"
+                                 }
+      )
+      return video
+    end
+
     private
 
     def text_resp(msg)

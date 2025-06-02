@@ -31,19 +31,21 @@ module Bot
       end
     end
 
-    def callback
-      return unless param['task_status'] != 'succeed' && param['task_status'] != 'failed'
+    def callback(payload)
+      return unless payload['task_status'] != 'succeed' && payload['task_status'] != 'failed'
 
-      task_id = param['task_id']
+      task_id = payload['task_id']
       ai_call = AiCall.find_by_task_id(task_id)
 
       if ai_call
-        payload = param
         payload['video'] = payload['task_result']['videos']&.first['url'] rescue nil
         ai_call.update!(
-          status: param['task_status'],
+          status: payload['task_status'],
           data: payload
         )
+        return [ai_call, payload['video']]
+      else
+        fail "[KLING API]task id not exist"
       end
     end
 

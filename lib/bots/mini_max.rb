@@ -82,21 +82,23 @@ module Bot
       end
     end
 
-    def callback
-      return { 'challenge': param['challenge'] } if param['challenge']
+    def callback(payload)
+      return { 'challenge': payload['challenge'] } if payload['challenge']
 
-      return unless param['status'] != 'success' && param['task_status'] != 'failed'
+      return unless payload['status'] != 'success' && payload['task_status'] != 'failed'
 
-      task_id = param['task_id']
+      task_id = payload['task_id']
       ai_call = AiCall.find_by_task_id(task_id)
 
       if ai_call
-        payload = param
-        payload['video'] = retrieve_video_file(param['file_id'])
+        payload['video'] = retrieve_video_file(payload['file_id'])
         ai_call.update!(
-          status: param['task_status'],
+          status: payload['task_status'],
           data: payload
         )
+        return [ai_call, payload['video']]
+      else
+        fail "[MINMAX API]task id not exist"
       end
     end
 
