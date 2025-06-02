@@ -43,21 +43,22 @@ module Bot
       task_id = video_api(message, options)
     end
 
-    def query_video_task(task_id, &block)
-      rst = {}
-      while true
-        rst = query_video_task_api(task_id)
-        yield rst
-        break if rst[:video]
-        sleep 1
-      end
-      rst[:video]
-    end
+    # def query_video_task(task_id, &block)
+    #   rst = {}
+    #   while true
+    #     rst = query_video_task_api(task_id)
+    #     yield rst
+    #     break if rst[:video]
+    #     sleep 1
+    #   end
+    #   rst[:video]
+    # end
 
     def webhook_callback(payload)
       ai_call, video = callback(payload)
 
       # OSS
+      # FIXME: 不会上传oss
       require 'open-uri'
       SaveToOssJob.perform_later(ai_call,
                                  :generated_media,

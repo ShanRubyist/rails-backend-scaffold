@@ -23,8 +23,7 @@ module Bot
     end
 
     def video_api(prompt, options = {})
-      aspect_ratio = options.fetch(:aspect_ratio, '1:1')
-      model_name = options.fetch(:model_name)
+      model_name = options.fetch(:model_name, 'kwaivgi/kling-v1.6-standard')
       model = ::Replicate.client.retrieve_model(model_name)
 
       version = model.latest_version
@@ -33,9 +32,7 @@ module Bot
       prediction = version.predict(
         {
           prompt: prompt,
-          aspect_ratio: aspect_ratio,
-          disable_safety_checker: true,
-          image: options.fetch(:image),
+          # image: options.fetch(:image),
         },
         webhook_url
       )

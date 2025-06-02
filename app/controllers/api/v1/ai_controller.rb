@@ -62,11 +62,12 @@ class Api::V1::AiController < UsageController
 
   def gen_video
     conversation = current_user.conversations.create
+    prompt = params['prompt']
 
     # generate video task
-    task_id = ai_bot.generate_video(prompt,
-                                    image_url: params[:image_url],
-                                    path: params[:path])
+    task_id = ai_bot.generate_video(prompt)
+
+    task_id = task_id.id if ai_bot.class == Bot::Replicate
 
     ai_call = conversation.ai_calls.create(
       task_id: task_id,
@@ -102,7 +103,7 @@ class Api::V1::AiController < UsageController
     if rst
       # For HaiLuo Video
       if rst.class == String
-        return json: rst
+        render json: rst
       else
         head :ok
       end
@@ -120,8 +121,8 @@ class Api::V1::AiController < UsageController
       payload = ai_call.data
 
       render json: {
-        status: payload['status'],
-        video: payload['video']
+        status: payload['status'] || payload['task_id']['data']['status'],
+        video: payload['video'] || payload['task_id']['data']['output']
       }
     else
       fail "[Controller]task id not exist"
@@ -170,6 +171,6 @@ class Api::V1::AiController < UsageController
   private
 
   def ai_bot
-    Bot::Fal.new
+    Bot::Replicate.new
   end
 end

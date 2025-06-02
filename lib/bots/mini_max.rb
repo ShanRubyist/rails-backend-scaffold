@@ -58,7 +58,7 @@ module Bot
       model = options.fetch(:model, 'T2V-01-Director')
       prompt_optimizer = options.fetch(:prompt_optimizer, nil)
       first_frame_image = options.fetch(:first_frame_image, nil)
-      callback_url = options.fetch(:callback_url, "https://#{ENV.fetch('HOST')}/api/v1/gen_callback")
+      callback_url = options.fetch(:callback_url, "https://#{ENV.fetch('HOST')}/gen_callback")
 
       resp = client.post(path) do |req|
         req.params['GroupId'] = @group_id
@@ -85,7 +85,7 @@ module Bot
     def callback(payload)
       return { 'challenge': payload['challenge'] } if payload['challenge']
 
-      return unless payload['status'] != 'success' && payload['task_status'] != 'failed'
+      return if payload['status'] != 'success' && payload['task_status'] != 'failed'
 
       task_id = payload['task_id']
       ai_call = AiCall.find_by_task_id(task_id)

@@ -9,7 +9,7 @@ module Bot
     end
 
     def video_api(message, options = {})
-      callback_url = options.fetch(:callback_url, "https://#{ENV.fetch('HOST')}/api/v1/gen_callback")
+      callback_url = options.fetch(:callback_url, "https://#{ENV.fetch('HOST')}/gen_callback")
       path = options.fetch(:path, "/fal-ai/veo2?fal_webhook=#{callback_url}")
       image_url = options.fetch(:image_url, nil)
 
@@ -41,9 +41,9 @@ module Bot
       ai_call = AiCall.find_by_task_id(request_id)
 
       if ai_call
-        payload['video'] = payload['payload']['videos']&.first['url'] rescue nil
+        payload['video'] = payload['payload']['video']['url'] rescue nil
         ai_call.update!(
-          status: 'success',
+          status: payload['status'],
           data: payload
         )
         return [ai_call, payload['video']]
