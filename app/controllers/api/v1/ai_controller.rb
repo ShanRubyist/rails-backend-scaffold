@@ -117,12 +117,11 @@ class Api::V1::AiController < UsageController
     ai_call = AiCall.find_by_task_id(task_id)
 
     if ai_call
-
       payload = ai_call.data
 
       render json: {
-        status: payload['status'] || payload['data']['status'],
-        video: payload['video'] || payload['data']['output']
+        status: ((payload['status'] || payload['data']['status']) rescue nil),
+        video: ((payload['video'] || payload['data']['output']) rescue nil)
       }
     else
       fail "[Controller]task id not exist"
