@@ -98,16 +98,16 @@ class Api::V1::AiController < UsageController
   end
 
   def gen_callback
-    rst = ai_bot.webhook_callback(params)
+    begin
+      rst = ai_bot.webhook_callback(params)
 
-    if rst
-      # For HaiLuo Video
-      if rst.class == String
+      if rst && (rst.class == String)
+        # For HaiLuo Video
         render json: rst
       else
         head :ok
       end
-    else
+    rescue
       head :bad_request
     end
   end
@@ -121,8 +121,8 @@ class Api::V1::AiController < UsageController
       payload = ai_call.data
 
       render json: {
-        status: payload['status'] || payload['task_id']['data']['status'],
-        video: payload['video'] || payload['task_id']['data']['output']
+        status: payload['status'] || payload['data']['status'],
+        video: payload['video'] || payload['data']['output']
       }
     else
       fail "[Controller]task id not exist"

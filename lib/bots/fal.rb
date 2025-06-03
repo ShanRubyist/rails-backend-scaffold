@@ -46,9 +46,20 @@ module Bot
           status: payload['status'],
           data: payload
         )
-        return [ai_call, payload['video']]
+        if payload['status'] == 'OK'
+          # OSS
+          require 'open-uri'
+          SaveToOssJob.perform_later(ai_call,
+                                     :generated_media,
+                                     {
+                                       io: URI.open(payload['video']),
+                                       filename: URI(payload['video']).path.split('/').last,
+                                       content_type: "video/mp4"
+                                     }
+          )
+        end
       else
-        fail "[FAL API]task id not exist"
+        # fail "[FAL API]task id not exist"
       end
     end
 

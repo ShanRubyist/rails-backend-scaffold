@@ -43,9 +43,20 @@ module Bot
           status: payload['task_status'],
           data: payload
         )
-        return [ai_call, payload['video']]
+        if payload['task_status'] == 'succeed'
+          # OSS
+          require 'open-uri'
+          SaveToOssJob.perform_later(ai_call,
+                                     :generated_media,
+                                     {
+                                       io: URI.open(payload['video']),
+                                       filename: URI(payload['video']).path.split('/').last,
+                                       content_type: "video/mp4"
+                                     }
+          )
+        end
       else
-        fail "[KLING API]task id not exist"
+        # fail "[KLING API]task id not exist"
       end
     end
 

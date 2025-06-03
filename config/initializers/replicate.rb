@@ -11,10 +11,24 @@ class ReplicateWebhook
         status: prediction.status,
         data: prediction
       )
-      return [ai_call, prediction.output]
+      if prediction.succeeded?
+        video = prediction.output
+        # OSS
+        require 'open-uri'
+        SaveToOssJob.perform_later(ai_call,
+                                   :generated_media,
+                                   {
+                                     io: URI.open(video),
+                                     filename: URI(video).path.split('/').last,
+                                     content_type: "video/mp4"
+                                   }
+        )
+      end
+
     else
       fail "[Replicate]task id not exist"
     end
+
   end
 end
 
