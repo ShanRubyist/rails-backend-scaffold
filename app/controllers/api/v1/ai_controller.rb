@@ -76,22 +76,6 @@ class Api::V1::AiController < UsageController
       input: params,
       "cost_credits": current_cost_credits)
 
-    # query video task status
-    # video = ai_bot.query_video_task(task_id) do |h|
-    #   ai_call.update_ai_call_status(h)
-    # end
-
-    # OSS
-    # require 'open-uri'
-    # SaveToOssJob.perform_later(ai_call,
-    #                            :generated_media,
-    #                            {
-    #                              io: URI.open(video),
-    #                              filename: URI(video).path.split('/').last,
-    #                              content_type: "video/mp4"
-    #                            }
-    # )
-
     render json: {
       task_id: task_id
     }
@@ -99,8 +83,9 @@ class Api::V1::AiController < UsageController
 
   def gen_callback
     begin
-      AigcWebhook.create!(header: response.headers, data: response.body)
+      AigcWebhook.create!(data: request.body.read)
 
+      # TODO: perform later & destroy AigcWebhook record
       rst = ai_bot.webhook_callback(params)
 
       if rst && (rst.class == String)
@@ -109,8 +94,8 @@ class Api::V1::AiController < UsageController
       else
         head :ok
       end
-    # rescue
-    #   head :bad_request
+      # rescue
+      #   head :bad_request
     end
   end
 
@@ -173,5 +158,6 @@ class Api::V1::AiController < UsageController
 
   def ai_bot
     Bot::Fal.new
+    Bot::Replicate.new
   end
 end

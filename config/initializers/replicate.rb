@@ -2,7 +2,9 @@ Replicate.client.api_token = ENV.fetch('REPLICATE_API_KEY')
 
 class ReplicateWebhook
   def call(prediction)
-    AigcWebhook.create!(header: response.headers, data: response.body)
+    # AigcWebhook.create!(data: prediction)
+
+    # TODO: perform later & destroy AigcWebhook record
     return unless prediction.succeeded? || prediction.failed? || prediction.canceled?
 
     ai_call = AiCall.find_by_task_id(prediction.id)
@@ -19,7 +21,7 @@ class ReplicateWebhook
         SaveToOssJob.perform_later(ai_call,
                                    :generated_media,
                                    {
-                                     io: URI.open(video),
+                                     io: video,
                                      filename: URI(video).path.split('/').last,
                                      content_type: "video/mp4"
                                    }

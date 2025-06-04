@@ -52,7 +52,7 @@ module Bot
           SaveToOssJob.perform_later(ai_call,
                                      :generated_media,
                                      {
-                                       io: URI.open(payload['video']),
+                                       io: payload['video'],
                                        filename: URI(payload['video']).path.split('/').last,
                                        content_type: "video/mp4"
                                      }
