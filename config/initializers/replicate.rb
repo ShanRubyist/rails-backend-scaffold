@@ -2,6 +2,7 @@ Replicate.client.api_token = ENV.fetch('REPLICATE_API_KEY')
 
 class ReplicateWebhook
   def call(prediction)
+    AigcWebhook.create!(header: response.headers, data: response.body)
     return unless prediction.succeeded? || prediction.failed? || prediction.canceled?
 
     ai_call = AiCall.find_by_task_id(prediction.id)

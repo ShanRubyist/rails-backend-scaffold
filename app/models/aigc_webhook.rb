@@ -1,0 +1,2 @@
+class AigcWebhook < ApplicationRecord
+end

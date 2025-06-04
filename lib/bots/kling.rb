@@ -43,7 +43,7 @@ module Bot
           status: payload['task_status'],
           data: payload
         )
-        if payload['task_status'] == 'succeed'
+        if payload['task_status'].downcase == 'succeed'
           # OSS
           require 'open-uri'
           SaveToOssJob.perform_later(ai_call,

@@ -1,8 +1,8 @@
 require 'bot'
 
 class Api::V1::AiController < UsageController
-  skip_around_action :check_credits, only: [:ai_call_info]
-  skip_before_action :check_if_maintenance_mode, only: [:ai_call_info]
+  skip_around_action :check_credits, only: [:ai_call_info, :gen_callback, :gen_task_status]
+  skip_before_action :check_if_maintenance_mode, only: [:ai_call_info, :gen_callback, :gen_task_status]
 
   def gen_image
     type = params['type']
@@ -99,6 +99,8 @@ class Api::V1::AiController < UsageController
 
   def gen_callback
     begin
+      AigcWebhook.create!(header: response.headers, data: response.body)
+
       rst = ai_bot.webhook_callback(params)
 
       if rst && (rst.class == String)
@@ -107,8 +109,8 @@ class Api::V1::AiController < UsageController
       else
         head :ok
       end
-    rescue
-      head :bad_request
+    # rescue
+    #   head :bad_request
     end
   end
 
@@ -170,6 +172,6 @@ class Api::V1::AiController < UsageController
   private
 
   def ai_bot
-    Bot::Replicate.new
+    Bot::Fal.new
   end
 end

@@ -8,7 +8,7 @@ Rails.application.routes.draw do
   # end
 
   mount ReplicateRails::Engine => "/replicate/webhook"
-  post 'gen_callback', to: 'ai#gen_callback'  #除了replicate以外
+  post 'gen_callback', to: 'api/v1/ai#gen_callback'  #除了replicate以外
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
