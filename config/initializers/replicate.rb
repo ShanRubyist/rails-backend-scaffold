@@ -2,7 +2,7 @@ Replicate.client.api_token = ENV.fetch('REPLICATE_API_KEY')
 
 class ReplicateWebhook
   def call(prediction)
-    # AigcWebhook.create!(data: prediction)
+    AigcWebhook.create!(data: prediction)
 
     # TODO: perform later & destroy AigcWebhook record
     return unless prediction.succeeded? || prediction.failed? || prediction.canceled?
