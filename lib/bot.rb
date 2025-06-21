@@ -21,11 +21,21 @@ module Bot
     end
 
     def generate_image(message, options = {})
-      resp = image_api(message, options)
-      image_resp(resp)
+      image_api(message, options)
     end
 
-    def generate_audio(message, options = {})
+    def query_image_task(task_id, &block)
+      rst = {}
+      while true
+        rst = query_image_task_api(task_id)
+        yield rst
+        break if rst[:image]
+        sleep 1
+      end
+      rst[:image]
+    end
+
+    def generate_audio(message, options = {}, &block)
       audio_api(message, options)
     end
 
@@ -33,15 +43,19 @@ module Bot
       task_id = video_api(message, options)
     end
 
-    def query_video_task(task_id, &block)
-      rst = {}
-      while true
-        rst = query_video_task_api(task_id)
-        yield rst
-        break if rst[:video]
-        sleep 1
-      end
-      rst[:video]
+    # def query_video_task(task_id, &block)
+    #   rst = {}
+    #   while true
+    #     rst = query_video_task_api(task_id)
+    #     yield rst
+    #     break if rst[:video]
+    #     sleep 1
+    #   end
+    #   rst[:video]
+    # end
+
+    def webhook_callback(payload)
+      callback(payload)
     end
 
     private
@@ -69,5 +83,6 @@ require 'bots/gemini'
 require 'bots/smarttrot'
 require 'bots/kling'
 require 'bots/fal'
+require 'bots/replicate'
 
 

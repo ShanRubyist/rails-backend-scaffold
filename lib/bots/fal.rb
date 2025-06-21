@@ -9,7 +9,8 @@ module Bot
     end
 
     def video_api(message, options = {})
-      path = options.fetch(:path, '/fal-ai/veo2')
+      callback_url = options.fetch(:callback_url, "https://#{ENV.fetch('HOST')}/gen_callback")
+      path = options.fetch(:path, "/fal-ai/veo2?fal_webhook=#{callback_url}")
       image_url = options.fetch(:image_url, nil)
 
       resp = client.post(path) do |req|
@@ -30,6 +31,35 @@ module Bot
         return h['request_id']
       else
         fail h.to_json
+      end
+    end
+
+    def callback(payload)
+      # return if payload['status'] != 'OK'
+
+      request_id = payload['request_id']
+      ai_call = AiCall.find_by_task_id(request_id)
+
+      if ai_call
+        payload['video'] = payload['payload']['video']['url'] rescue nil
+        ai_call.update!(
+          status: payload['status'],
+          data: payload
+        )
+        if payload['status'] == 'OK'
+          # OSS
+          require 'open-uri'
+          SaveToOssJob.perform_later(ai_call,
+                                     :generated_media,
+                                     {
+                                       io: payload['video'],
+                                       filename: URI(payload['video']).path.split('/').last,
+                                       content_type: "video/mp4"
+                                     }
+          )
+        end
+      else
+        # fail "[FAL API]task id not exist"
       end
     end
 

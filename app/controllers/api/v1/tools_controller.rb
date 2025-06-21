@@ -6,26 +6,27 @@ module Api
         published
       end
 
+      def search
+        published
+      end
+
       def show
         @tool = Tool.published.find_by(name: params[:id])
         if @tool
-          render json: {
-            id: @tool.id,
-            name: @tool.name,
-            description: @tool.description,
-            website: url_with_utm(@tool.url),
-            addedDate: @tool.created_at,
-            logo: @tool.logo_url,
-            monthlyTraffic: @tool.popularity,
-            pricing_type: @tool.pricing_type,
-            rating: 3.5,
-            reviews: 2,
-            collections: 3,
-            linkedin: true,
-            github: true,
-            screenshot: '',
-            tags: @tool.tags.map(&:name)
-          }
+          render json:
+                   formatted_tool_json(@tool)
+                     .merge({
+                              addedDate: @tool.created_at,
+                              logo: @tool.logo_url,
+                              monthlyTraffic: @tool.popularity,
+                              pricing_type: @tool.pricing_type,
+                              rating: 3.5,
+                              reviews: 2,
+                              collections: 3,
+                              linkedin: true,
+                              github: true,
+                              screenshot: '',
+                            })
         else
           render json: {
             message: 'tool not found'
@@ -35,15 +36,11 @@ module Api
 
       def tool_alternatives
         @tool = Tool.published.find_by(name: params[:name])
+
         if @tool
           render json: (
             @tool.alternatives.map do |alt|
-              {
-                name: alt.name,
-                description: alt.description,
-                website: url_with_utm(alt.url),
-                tags: @tool.tags.map(&:name),
-              }
+              formatted_tool_json(alt)
             end
           )
         else
@@ -55,21 +52,25 @@ module Api
 
       # GET /api/v1/tools/published
       def published
+        params[:page] ||= 1
+        params[:per] ||= 20
+
         @tools = Tool.published
-        render json: (@tools.map do |tool|
-          tool_data = tool.scraped_infos.first.data
-          {
-            id: tool.id,
-            name: tool.name,
-            url: url_with_utm(tool.url),
-            logo: tool_data['logo'],
-            description: tool_data['description'],
-            tags: tool.tags.map(&:name),
-            # likes: 13500,
-            # growth: 27.52,
-            # featured: false
-          }
-        end)
+        @tools = @tools.search_by_query(params[:query]) if params[:query]
+        @tools = @tools.search_by_tags(params[:tags]) if params[:tags]
+        @tools = @tools.order_by(params[:sort_by]) if params[:sort_by]
+        @tools = @tools.page(params[:page].to_i).per(params[:per].to_i)
+
+        render json: {
+          total: @tools.total_count,
+          current_page: @tools.current_page,
+          total_pages: @tools.total_pages,
+          tools: (
+            @tools.map do |tool|
+              formatted_tool_json(tool)
+            end
+          )
+        }
       end
 
       # GET /api/v1/tools/unpublished
@@ -92,32 +93,77 @@ module Api
         render json: @tool
       end
 
-      # GET /api/v1/tools/search
-      def search
-        @tools = Tool.published
-        @tools = @tools.search_by_query(params[:query]) if params[:query]
-        @tools = @tools.search_by_tags(params[:tags]) if params[:tags]
-        @tools = @tools.order_by(params[:sort_by]) if params[:sort_by]
+      def tag_tools
+        params[:page] ||= 1
+        params[:per] ||= 20
 
-        render json: (
-          @tools.map do |tool|
-            tool_data = tool.scraped_infos.first.data
-            {
-              id: tool.id,
-              name: tool.name,
-              url: url_with_utm(tool.url),
-              logo: tool_data['logo'],
-              description: tool_data['description'],
-              tags: tool.tags.map(&:name),
-              # likes: 13500,
-              # growth: 27.52,
-              # featured: false
-            }
-          end
-        )
+        tag = Tag.find_by(slug: params[:tag])
+        if tag
+          @tools = tag.tools
+          @tools = @tools.order_by(params[:sort_by]) if params[:sort_by]
+          @tools = @tools.page(params[:page].to_i).per(params[:per].to_i)
+
+          render json: {
+            total: @tools.total_count,
+            current_page: @tools.current_page,
+            total_pages: @tools.total_pages,
+            tools: (
+              @tools.map do |tool|
+                formatted_tool_json(tool)
+              end
+            )
+          }
+        else
+          render json: {
+            message: 'tag not found'
+          }
+        end
+      end
+
+      def monthly_tools
+        params[:page] ||= 1
+        params[:per] ||= 20
+
+        date = Date.strptime(params[:month], "%Y-%m")
+
+        if date
+          @tools = Tool.monthly_tools(date)
+          @tools = @tools.order_by(params[:sort_by]) if params[:sort_by]
+          @tools = @tools.page(params[:page].to_i).per(params[:per].to_i)
+
+          render json: {
+            total: @tools.total_count,
+            current_page: @tools.current_page,
+            total_pages: @tools.total_pages,
+            tools: (
+              @tools.map do |tool|
+                formatted_tool_json(tool)
+              end
+            )
+          }
+        else
+          render json: {
+            message: 'date invalid'
+          }
+        end
       end
 
       private
+
+      def formatted_tool_json(tool)
+        {
+          id: tool.id,
+          name: tool.name,
+          url: url_with_utm(tool.url),
+          logo: '',
+          description: tool.description,
+          tags: tool.tags.map(&:name),
+          # likes: 13500,
+          # growth: 27.52,
+          # featured: false
+        }
+
+      end
 
       def url_with_utm(url)
         url += "?utm_source=#{ENV.fetch('HOST').sub('api.', '')}"

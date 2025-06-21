@@ -11,8 +11,8 @@ module DistributedLock
     Redis.new(url: ENV.fetch("REDIS_URL") { "redis://localhost:6379/1" })
   end
 
-  def with_redis_lock(key, timeout = 100)
-    lock_key = "lock:#{key}"
+  def with_redis_lock(key, timeout = 60)
+    lock_key = "user_lock:#{key}"
     lock_value = SecureRandom.uuid
 
     attempt = 0
@@ -21,15 +21,23 @@ module DistributedLock
         begin
           return yield
         ensure
+          lua_script = <<-LUA
+            if redis.call("GET", KEYS[1]) == ARGV[1] then
+              return redis.call("DEL", KEYS[1])
+            else
+              return 0
+            end
+          LUA
           redis_client.eval(
-            "if redis.call('get', KEYS[1]) == ARGV[1] then return redis.call('del', KEYS[1]) else return 0 end",
+            lua_script,
             keys: [lock_key],
             argv: [lock_value]
           )
         end
       else
         attempt += 1
-        sleep (2 ** attempt + rand(10))
+        sleep 1
+        # sleep (2 ** attempt + rand(10))
       end
 
     end

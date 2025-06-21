@@ -7,6 +7,9 @@ Rails.application.routes.draw do
   #   mount Sidekiq::Web => '/sidekiq'
   # end
 
+  mount ReplicateRails::Engine => "/replicate/webhook"
+  post 'gen_callback', to: 'api/v1/ai#gen_callback'  #除了replicate以外
+
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Defines the root path route ("/")
@@ -19,6 +22,8 @@ Rails.application.routes.draw do
   get 'stripe_billing', to: 'payment#stripe_billing', as: 'billing'
   post 'paddle_customer', to: 'payment#paddle_customer', as: 'paddle_customer'
   get 'charges_history', to: 'payment#charges_history', as: 'charges_history'
+  post 'creem_checkout', to: 'payment#creem_checkout', as: 'creem_checkout'
+  post 'creem_callback', to: 'payment#creem_callback', as: 'creem_callback'
 
   # 跨域预检请求
   match '*all', controller: 'application', action: 'cors_preflight_check', via: [:options]
@@ -31,7 +36,9 @@ Rails.application.routes.draw do
       post 'log_client_error', to: 'info#log_client_error'
       get 'active_subscription_info', to: 'info#active_subscription_info', as: 'active_subscription_info'
 
+      post 'gen_image', to: 'ai#gen_image'
       post 'gen_video', to: 'ai#gen_video'
+      get 'gen_task_status', to: 'ai#gen_task_status'
       get 'ai_call_info', to: 'ai#ai_call_info'
 
       resources :info do
@@ -45,6 +52,13 @@ Rails.application.routes.draw do
           collection do
             get 'staticstics_info' => 'dashboard#statistics_info'
             get 'ai_call_info' => 'dashboard#ai_call_info'
+            get 'error_log', to: 'dashboard#error_log'
+            get 'users', to: 'dashboard#users'
+            get 'pay_webhooks', to: 'dashboard#pay_webhooks'
+            post 'rerun_pay_webhook', to: 'dashboard#rerun_pay_webhook'
+            get 'pay_orders', to: 'dashboard#pay_orders'
+            get 'origin_orders', to: 'dashboard#origin_orders'
+            post 'maintenance_mode', to: 'dashboard#maintenance_mode'
           end
         end
       end
@@ -55,6 +69,8 @@ Rails.application.routes.draw do
           get :unpublished
           get :search
           get :tool_alternatives
+          get :tag_tools
+          get :monthly_tools
         end
 
         member do

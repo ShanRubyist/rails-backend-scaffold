@@ -53,13 +53,12 @@ module Bot
       # end
     end
 
-    # TODO: Callback 方式还不支持
     def video_api(message, options = {})
       path = options.fetch(:path, '/v1/video_generation')
       model = options.fetch(:model, 'T2V-01-Director')
       prompt_optimizer = options.fetch(:prompt_optimizer, nil)
       first_frame_image = options.fetch(:first_frame_image, nil)
-      callback_url = options.fetch(:callback_url, nil)
+      callback_url = options.fetch(:callback_url, "https://#{ENV.fetch('HOST')}/gen_callback")
 
       resp = client.post(path) do |req|
         req.params['GroupId'] = @group_id
@@ -83,6 +82,37 @@ module Bot
       end
     end
 
+    def callback(payload)
+      return { 'challenge': payload['challenge'] } if payload['challenge']
+
+      return if payload['status'] != 'success' && payload['task_status'] != 'failed'
+
+      task_id = payload['task_id']
+      ai_call = AiCall.find_by_task_id(task_id)
+
+      if ai_call
+        payload['video'] = retrieve_video_file(payload['file_id'])
+        ai_call.update!(
+          status: payload['task_status'],
+          data: payload
+        )
+        if payload['status'] == 'success'
+          # OSS
+          require 'open-uri'
+          SaveToOssJob.perform_later(ai_call,
+                                     :generated_media,
+                                     {
+                                       io: payload['video'],
+                                       filename: URI(payload['video']).path.split('/').last,
+                                       content_type: "video/mp4"
+                                     }
+          )
+        end
+      else
+        # fail "[MINMAX API]task id not exist"
+      end
+    end
+
     private
 
     def query_video_task_api(task_id)
@@ -99,7 +129,7 @@ module Bot
         h = JSON.parse(resp.body)
         if h['status'] == 'Sucess'
           return {
-            stauts: 'success',
+            status: 'success',
             video: retrieve_video_file(h['file_id']),
             data: h
           }

@@ -34,6 +34,8 @@ class TDHScraper < Scraper
       scraped_info.last_scraped_at = Time.current
       scraped_info.tool = tool if tool
       scraped_info.save!
+
+      tool.update(description: data[:description])
     end
 
     def extract_title(doc)
